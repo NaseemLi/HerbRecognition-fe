@@ -329,6 +329,14 @@ onMounted(() => {
   flex-wrap: wrap;
 }
 
+.item-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
 .item-info h3 {
   font-size: 20px;
   font-weight: 700;
@@ -337,15 +345,11 @@ onMounted(() => {
 }
 
 .item-category {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  left: auto;
-  padding: 3px 8px;
-  background: rgba(16, 185, 129, 0.9);
-  color: #fff;
+  padding: 3px 10px;
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--primary-color);
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   white-space: nowrap;
 }
