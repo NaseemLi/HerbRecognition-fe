@@ -5,20 +5,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: herb-frontend
+    restart: always
     ports:
       - "80:80"
-    depends_on:
-      - backend
-    networks:
-      - herb-network
-
-  backend:
-    image: herb-backend:latest
-    restart: always
-    networks:
-      - herb-network
     environment:
       - TZ=Asia/Shanghai
+    networks:
+      - herb-network
 
 networks:
   herb-network:
