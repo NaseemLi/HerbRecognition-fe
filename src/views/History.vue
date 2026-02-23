@@ -29,7 +29,7 @@
       <div v-for="item in list" :key="item.id" class="item">
         <div class="item-image-wrapper">
           <img :src="apiUrl + item.image_url" :alt="item.herb_name" class="item-image" />
-          <span class="item-confidence">{{ item.confidence }}%</span>
+          <span v-if="item.confidence" class="item-confidence">{{ item.confidence }}%</span>
         </div>
         <div class="item-info">
           <h3>{{ item.herb_name }}</h3>
@@ -251,14 +251,15 @@ onMounted(() => {
 
 .item-confidence {
   position: absolute;
-  bottom: 6px;
-  right: 6px;
-  padding: 4px 10px;
-  background: rgba(16, 185, 129, 0.95);
+  top: 8px;
+  left: 8px;
+  padding: 3px 8px;
+  background: rgba(16, 185, 129, 0.9);
   color: #fff;
-  border-radius: 12px;
-  font-size: 12px;
+  border-radius: 4px;
+  font-size: 11px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .item-info {
