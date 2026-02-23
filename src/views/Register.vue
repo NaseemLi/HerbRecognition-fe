@@ -1,15 +1,17 @@
 <template>
-  <div class="login-container">
-    <div class="login-card">
-      <h1>中草药识别系统</h1>
-      <form @submit.prevent="handleLogin">
+  <div class="register-container">
+    <div class="register-card">
+      <h1>注册账号</h1>
+      <form @submit.prevent="handleRegister">
         <div class="form-item">
           <label>用户名</label>
           <input 
             v-model="form.username" 
             type="text" 
-            placeholder="请输入用户名"
+            placeholder="3-32 个字符"
             required
+            minlength="3"
+            maxlength="32"
           />
         </div>
         <div class="form-item">
@@ -17,17 +19,28 @@
           <input 
             v-model="form.password" 
             type="password" 
-            placeholder="请输入密码"
+            placeholder="至少 6 个字符"
+            required
+            minlength="6"
+          />
+        </div>
+        <div class="form-item">
+          <label>确认密码</label>
+          <input 
+            v-model="form.confirmPassword" 
+            type="password" 
+            placeholder="请再次输入密码"
             required
           />
         </div>
         <button type="submit" :disabled="loading">
-          {{ loading ? '登录中...' : '登录' }}
+          {{ loading ? '注册中...' : '注册' }}
         </button>
       </form>
       <p v-if="error" class="error">{{ error }}</p>
+      <p v-if="success" class="success">注册成功，即将跳转登录</p>
       <div class="links">
-        <router-link to="/register">没有账号？去注册</router-link>
+        <router-link to="/login">已有账号？去登录</router-link>
       </div>
     </div>
   </div>
@@ -36,30 +49,40 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
-import { login } from '@/api/auth'
+import { register } from '@/api/auth'
 
 const router = useRouter()
-const userStore = useUserStore()
 
 const form = reactive({
   username: '',
-  password: ''
+  password: '',
+  confirmPassword: ''
 })
 
 const loading = ref(false)
 const error = ref('')
+const success = ref(false)
 
-async function handleLogin() {
+async function handleRegister() {
+  if (form.password !== form.confirmPassword) {
+    error.value = '两次输入的密码不一致'
+    return
+  }
+
   loading.value = true
   error.value = ''
 
   try {
-    const res = await login(form)
-    userStore.setAuth(res.data.token, res.data.user)
-    router.push('/')
+    await register({
+      username: form.username,
+      password: form.password
+    })
+    success.value = true
+    setTimeout(() => {
+      router.push('/login')
+    }, 1500)
   } catch (e: any) {
-    error.value = e.response?.data?.message || '登录失败'
+    error.value = e.response?.data?.message || '注册失败'
   } finally {
     loading.value = false
   }
@@ -67,7 +90,7 @@ async function handleLogin() {
 </script>
 
 <style scoped>
-.login-container {
+.register-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -75,7 +98,7 @@ async function handleLogin() {
   background: #f5f5f5;
 }
 
-.login-card {
+.register-card {
   background: #fff;
   padding: 40px;
   border-radius: 8px;
@@ -84,7 +107,7 @@ async function handleLogin() {
   max-width: 400px;
 }
 
-.login-card h1 {
+.register-card h1 {
   text-align: center;
   margin-bottom: 30px;
   color: #333;
@@ -138,6 +161,13 @@ button:disabled {
 
 .error {
   color: #f56c6c;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.success {
+  color: #67c23a;
   text-align: center;
   margin-top: 10px;
   font-size: 14px;
