@@ -31,7 +31,7 @@
         <thead>
           <tr>
             <th class="checkbox-col"><input type="checkbox" @change="toggleAll" :checked="isAllSelected" /></th>
-            <th>ID</th>
+            <th class="image-col">图片</th>
             <th>名称</th>
             <th>学名</th>
             <th>分类</th>
@@ -41,7 +41,12 @@
         <tbody>
           <tr v-for="item in list" :key="item.id">
             <td><input type="checkbox" :value="item.id" v-model="selectedIds" /></td>
-            <td class="text-muted">#{{ item.id }}</td>
+            <td>
+              <div class="thumbnail">
+                <img v-if="item.image_url" :src="apiUrl + item.image_url" :alt="item.name" />
+                <span v-else class="no-image">无图</span>
+              </div>
+            </td>
             <td>
               <span class="name">{{ item.name }}</span>
             </td>
@@ -136,6 +141,9 @@ import type { AdminHerbCreate, AdminHerbUpdate } from '@/api/admin'
 
 const router = useRouter()
 const userStore = useUserStore()
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+const apiUrl = ref(API_BASE_URL)
 
 const list = ref<Herb[]>([])
 const loading = ref(true)
@@ -459,6 +467,32 @@ onMounted(() => {
 .table .checkbox-col {
   width: 50px;
   text-align: center;
+}
+
+.table .image-col {
+  width: 80px;
+}
+
+.thumbnail {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumbnail .no-image {
+  color: var(--text-light);
+  font-size: 12px;
 }
 
 .text-muted {
