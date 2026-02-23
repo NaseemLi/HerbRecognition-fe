@@ -3,10 +3,7 @@
     <header class="header">
       <div class="header-left">
         <div class="logo">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="16" cy="16" r="16" fill="#10b981"/>
-            <path d="M16 8C16 8 12 12 12 16C12 20 16 24 16 24C16 24 20 20 20 16C20 12 16 8 16 8Z" fill="white" opacity="0.3"/>
-          </svg>
+          <img src="/logo.png" alt="中草药识别系统" />
         </div>
         <h1>中草药识别系统</h1>
       </div>
@@ -19,6 +16,7 @@
       <div class="user-info">
         <div class="avatar">{{ userStore.user?.username.charAt(0).toUpperCase() }}</div>
         <span class="username">{{ userStore.user?.username }}</span>
+        <router-link to="/profile" class="btn-profile">个人中心</router-link>
         <button @click="handleLogout" class="btn-logout" title="退出登录">退出</button>
       </div>
     </header>
@@ -177,6 +175,12 @@ function handleLogout() {
   align-items: center;
 }
 
+.logo img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
 .header h1 {
   font-size: 20px;
   font-weight: 700;
@@ -237,6 +241,22 @@ function handleLogout() {
 .username {
   color: var(--text-primary);
   font-weight: 500;
+}
+
+.btn-profile {
+  padding: 8px 16px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn-profile:hover {
+  background: rgba(16, 185, 129, 0.2);
 }
 
 .btn-logout {
