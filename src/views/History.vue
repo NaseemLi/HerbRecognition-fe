@@ -252,7 +252,8 @@ onMounted(() => {
 .item-confidence {
   position: absolute;
   top: 8px;
-  left: 8px;
+  right: 8px;
+  left: auto;
   padding: 3px 8px;
   background: rgba(16, 185, 129, 0.9);
   color: #fff;

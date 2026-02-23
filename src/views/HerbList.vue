@@ -337,11 +337,15 @@ onMounted(() => {
 }
 
 .item-category {
-  padding: 3px 10px;
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--primary-color);
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  left: auto;
+  padding: 3px 8px;
+  background: rgba(16, 185, 129, 0.9);
+  color: #fff;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
   white-space: nowrap;
 }
