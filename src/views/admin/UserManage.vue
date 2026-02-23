@@ -23,7 +23,7 @@
       <table class="table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th class="image-col">用户</th>
             <th>用户名</th>
             <th>角色</th>
             <th>操作</th>
@@ -31,12 +31,11 @@
         </thead>
         <tbody>
           <tr v-for="item in list" :key="item.id">
-            <td class="text-muted">#{{ item.id }}</td>
             <td>
-              <div class="user-cell">
-                <div class="user-avatar">{{ item.username.charAt(0).toUpperCase() }}</div>
-                <span class="user-name">{{ item.username }}</span>
-              </div>
+              <div class="user-avatar-small">{{ item.username.charAt(0).toUpperCase() }}</div>
+            </td>
+            <td>
+              <span class="user-name">{{ item.username }}</span>
             </td>
             <td>
               <select :value="item.role" @change="handleRoleChange(item.id, $event)" class="role-select">
@@ -241,6 +240,28 @@ onMounted(() => {
 
 .table tr:hover {
   background: var(--bg-secondary);
+}
+
+.table .image-col {
+  width: 80px;
+}
+
+.user-avatar-small {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.user-name {
+  font-weight: 500;
+  color: var(--text-primary);
 }
 
 .text-muted {
