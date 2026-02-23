@@ -310,8 +310,8 @@ onMounted(() => {
 }
 
 .item-image {
-  width: 140px;
-  height: 140px;
+  width: 100px;
+  height: 100px;
   object-fit: cover;
   border-radius: var(--radius);
 }
