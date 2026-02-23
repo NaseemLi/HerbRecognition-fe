@@ -48,12 +48,6 @@ export function uploadHerbImage(image: File) {
   formData.append('image', image)
   return request.post<any, ApiResponse<{ image_url: string }>>(
     '/api/admin/herb/upload-image',
-    formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      transformRequest: [(data) => data]
-    }
+    formData
   )
 }
