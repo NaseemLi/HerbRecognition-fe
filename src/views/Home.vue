@@ -8,9 +8,6 @@
         <h1>中草药识别系统</h1>
       </div>
       <nav class="nav">
-        <router-link to="/recognize" class="nav-item">开始识别</router-link>
-        <router-link to="/herbs" class="nav-item">药材查询</router-link>
-        <router-link to="/history" class="nav-item">历史记录</router-link>
         <router-link v-if="userStore.user?.role === 'admin'" to="/admin/herbs" class="nav-item admin">管理后台</router-link>
       </nav>
       <div class="user-info">
@@ -30,6 +27,7 @@
             <div class="hero-actions">
               <router-link to="/recognize" class="btn-primary">开始识别</router-link>
               <router-link to="/herbs" class="btn-secondary">浏览药材</router-link>
+              <router-link to="/history" class="btn-secondary">历史记录</router-link>
             </div>
           </div>
           <div class="hero-carousel">
