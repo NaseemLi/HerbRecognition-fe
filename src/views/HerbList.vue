@@ -44,10 +44,12 @@
       <div v-for="item in list" :key="item.id" class="item" @click="goToDetail(item.id)">
         <div class="item-image-wrapper">
           <img :src="apiUrl + item.image_url" :alt="item.name" class="item-image" />
-          <div v-if="item.category" class="item-category">{{ item.category }}</div>
         </div>
         <div class="item-info">
-          <h3>{{ item.name }}</h3>
+          <div class="item-header">
+            <h3>{{ item.name }}</h3>
+            <span v-if="item.category" class="item-category">{{ item.category }}</span>
+          </div>
           <p v-if="item.scientific" class="scientific">{{ item.scientific }}</p>
           <p class="description">{{ item.description || '暂无描述' }}</p>
         </div>
@@ -279,12 +281,12 @@ onMounted(() => {
 
 .item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 20px;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 20px;
+  padding: 16px;
   cursor: pointer;
   transition: all 0.3s;
 }
@@ -296,43 +298,44 @@ onMounted(() => {
 }
 
 .item-image-wrapper {
-  position: relative;
   flex-shrink: 0;
 }
 
 .item-image {
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
   object-fit: cover;
   border-radius: var(--radius);
 }
 
-.item-category {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  padding: 4px 10px;
-  background: rgba(16, 185, 129, 0.95);
-  color: #fff;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
-  white-space: nowrap;
-  max-width: 80px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
 .item-info {
   flex: 1;
+  min-width: 0;
+}
+
+.item-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
 }
 
 .item-info h3 {
   font-size: 20px;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 10px;
+  margin: 0;
+}
+
+.item-category {
+  padding: 3px 10px;
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--primary-color);
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .scientific {
@@ -355,6 +358,7 @@ onMounted(() => {
 
 .item-arrow {
   flex-shrink: 0;
+  align-self: center;
   transition: all 0.3s;
 }
 
@@ -413,7 +417,7 @@ onMounted(() => {
   
   .item-image {
     width: 100%;
-    height: 150px;
+    height: 180px;
   }
   
   .item-arrow {

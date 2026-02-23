@@ -22,7 +22,7 @@
         <button @click="handleLogout" class="btn-logout" title="退出登录">退出</button>
       </div>
     </header>
-    
+
     <main class="main">
       <div class="content-wrapper">
         <div class="hero-section">
@@ -46,8 +46,8 @@
               </div>
             </div>
             <div class="carousel-dots">
-              <span 
-                v-for="(_, index) in slides" 
+              <span
+                v-for="(_, index) in slides"
                 :key="index"
                 :class="['dot', { active: index === currentSlide }]"
                 @click="currentSlide = index"
@@ -112,9 +112,9 @@ const currentSlide = ref(0)
 let timer: number | null = null
 
 const slides = ref([
-  { name: '人参', category: '补气药', image: 'https://images.unsplash.com/photo-1628108427794-2a1a0e69c2d3?w=600&h=400&fit=crop' },
-  { name: '枸杞', category: '补阴药', image: 'https://images.unsplash.com/photo-1606859191214-25806e8e2423?w=600&h=400&fit=crop' },
-  { name: '当归', category: '补血药', image: 'https://images.unsplash.com/photo-1615486511484-92e172cc416d?w=600&h=400&fit=crop' },
+  { name: '人参', category: '补气药', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Ginsengpflanze.jpg/500px-Ginsengpflanze.jpg' },
+  { name: '枸杞', category: '补阴药', image: 'https://i.111666.best/image/UGDeo3OceH8Heq0ypyusGR.jpg' },
+  { name: '当归', category: '补血药', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Chinatown_Museum_Collections_in_Binondo_34.jpg/500px-Chinatown_Museum_Collections_in_Binondo_34.jpg' },
   { name: '黄芪', category: '补气药', image: 'https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?w=600&h=400&fit=crop' },
 ])
 
@@ -463,11 +463,11 @@ function handleLogout() {
     grid-template-columns: 1fr;
     gap: 32px;
   }
-  
+
   .hero-text h2 {
     font-size: 32px;
   }
-  
+
   .hero-carousel .carousel-slide {
     height: 280px;
   }
@@ -477,23 +477,23 @@ function handleLogout() {
   .header {
     padding: 12px 16px;
   }
-  
+
   .nav {
     display: none;
   }
-  
+
   .content-wrapper {
     padding: 24px 16px;
   }
-  
+
   .hero-text h2 {
     font-size: 28px;
   }
-  
+
   .hero-actions {
     flex-direction: column;
   }
-  
+
   .features {
     grid-template-columns: 1fr;
   }
