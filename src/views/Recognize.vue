@@ -1,5 +1,8 @@
 <template>
   <div class="recognize-page">
+    <div class="page-nav">
+      <BackButton text="返回首页" />
+    </div>
     <div class="page-header">
       <h1>药材识别</h1>
       <p>上传图片，AI 智能识别中草药</p>
@@ -65,6 +68,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import BackButton from '@/components/BackButton.vue'
 import { uploadAndRecognize } from '@/api/recognize'
 import type { RecognizeResult } from '@/api/recognize'
 
@@ -130,6 +134,10 @@ async function handleRecognize() {
   max-width: 900px;
   margin: 0 auto;
   padding: 32px 24px;
+}
+
+.page-nav {
+  margin-bottom: 24px;
 }
 
 .page-header {

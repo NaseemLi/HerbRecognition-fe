@@ -1,5 +1,8 @@
 <template>
   <div class="herbs-page">
+    <div class="page-nav">
+      <BackButton text="返回首页" />
+    </div>
     <div class="page-header">
       <h1>药材查询</h1>
       <p>探索中草药的奥秘</p>
@@ -72,6 +75,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import BackButton from '@/components/BackButton.vue'
 import { getHerbList, searchHerb } from '@/api/herb'
 import type { Herb } from '@/api/herb'
 
@@ -154,6 +158,10 @@ onMounted(() => {
   max-width: 900px;
   margin: 0 auto;
   padding: 32px 24px;
+}
+
+.page-nav {
+  margin-bottom: 24px;
 }
 
 .page-header {

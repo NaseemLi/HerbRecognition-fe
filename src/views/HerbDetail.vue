@@ -6,13 +6,8 @@
     </div>
     
     <div v-else-if="herb" class="detail">
-      <div class="back-nav">
-        <router-link to="/herbs" class="back-link">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 4L6 10L12 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          返回药材列表
-        </router-link>
+      <div class="page-nav">
+        <BackButton default-back="/herbs" text="返回药材列表" />
       </div>
       
       <div class="detail-card">
@@ -85,6 +80,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import BackButton from '@/components/BackButton.vue'
 import { getHerbDetail } from '@/api/herb'
 import type { Herb } from '@/api/herb'
 
@@ -114,29 +110,16 @@ onMounted(async () => {
   padding: 32px 24px;
 }
 
+.page-nav {
+  margin-bottom: 24px;
+}
+
 .back-nav {
   margin-bottom: 24px;
 }
 
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--text-secondary);
-  font-weight: 500;
-  transition: all 0.2s;
-}
-
-.back-link:hover {
-  color: var(--primary-color);
-}
-
-.back-link svg {
-  transition: transform 0.2s;
-}
-
-.back-link:hover svg {
-  transform: translateX(-4px);
+.page-nav {
+  margin-bottom: 24px;
 }
 
 .loading {

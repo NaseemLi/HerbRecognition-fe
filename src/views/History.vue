@@ -1,5 +1,8 @@
 <template>
   <div class="history-page">
+    <div class="page-nav">
+      <BackButton text="返回首页" />
+    </div>
     <div class="page-header">
       <h1>识别历史</h1>
       <p>查看您的识别记录</p>
@@ -51,6 +54,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import BackButton from '@/components/BackButton.vue'
 import { getHistory, deleteHistory } from '@/api/recognize'
 import type { HistoryItem } from '@/api/recognize'
 
@@ -124,6 +128,10 @@ onMounted(() => {
   max-width: 900px;
   margin: 0 auto;
   padding: 32px 24px;
+}
+
+.page-nav {
+  margin-bottom: 24px;
 }
 
 .page-header {
