@@ -44,7 +44,7 @@
       <div v-for="item in list" :key="item.id" class="item" @click="goToDetail(item.id)">
         <div class="item-image-wrapper">
           <img :src="apiUrl + item.image_url" :alt="item.name" class="item-image" />
-          <div class="item-category">{{ item.category || '未知' }}</div>
+          <div v-if="item.category" class="item-category">{{ item.category }}</div>
         </div>
         <div class="item-info">
           <h3>{{ item.name }}</h3>
@@ -311,12 +311,17 @@ onMounted(() => {
   position: absolute;
   top: 8px;
   left: 8px;
-  padding: 4px 12px;
+  padding: 4px 10px;
   background: rgba(16, 185, 129, 0.95);
   color: #fff;
   border-radius: 12px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
+  white-space: nowrap;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .item-info {
