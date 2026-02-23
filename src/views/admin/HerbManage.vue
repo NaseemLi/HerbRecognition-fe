@@ -224,17 +224,25 @@ function handleImageChange(e: Event) {
 async function handleSubmit() {
   submitting.value = true
   try {
+    let imageUrl: string | undefined
+
+    // 先上传新图片（如果有）
     if (selectedImage.value) {
-      await uploadHerbImage(selectedImage.value)
+      const uploadRes = await uploadHerbImage(selectedImage.value)
+      imageUrl = uploadRes.data.image_url
     }
 
-    const data: AdminHerbCreate & { id?: number } = { ...formData.value }
+    const submitData: AdminHerbCreate & { id?: number } = { ...formData.value }
+    if (imageUrl) {
+      submitData.image_url = imageUrl
+    }
 
     if (editingItem.value) {
-      await updateHerb(data as AdminHerbUpdate)
+      await updateHerb({ ...submitData, id: editingItem.value.id } as AdminHerbUpdate)
     } else {
-      await createHerb(data as AdminHerbCreate)
+      await createHerb(submitData as AdminHerbCreate)
     }
+
     showModal.value = false
     loadPage(page.value)
   } catch (e: any) {

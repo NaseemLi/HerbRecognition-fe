@@ -10,6 +10,7 @@ export interface AdminHerbCreate {
   description?: string
   effects?: string
   usage?: string
+  image_url?: string
 }
 
 export interface AdminHerbUpdate extends AdminHerbCreate {
