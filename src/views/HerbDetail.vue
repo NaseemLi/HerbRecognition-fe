@@ -1,46 +1,82 @@
 <template>
-  <div class="herb-detail">
-    <div v-if="loading" class="loading">加载中...</div>
+  <div class="herb-detail-page">
+    <div v-if="loading" class="loading">
+      <div class="loading-spinner"></div>
+      <p>加载中...</p>
+    </div>
     
     <div v-else-if="herb" class="detail">
-      <router-link to="/herbs" class="back">← 返回列表</router-link>
+      <div class="back-nav">
+        <router-link to="/herbs" class="back-link">
+          <span class="icon">←</span> 返回药材列表
+        </router-link>
+      </div>
       
-      <div class="content">
-        <div class="image-section">
-          <img 
-            v-if="herb.image_url" 
-            :src="apiUrl + herb.image_url" 
-            :alt="herb.name" 
-            class="herb-image"
-          />
-          <div v-else class="no-image">无图片</div>
+      <div class="detail-card">
+        <div class="detail-header">
+          <div class="image-section">
+            <img 
+              v-if="herb.image_url" 
+              :src="apiUrl + herb.image_url" 
+              :alt="herb.name" 
+              class="herb-image"
+            />
+            <div v-else class="no-image">
+              <span class="icon">🌿</span>
+              <p>暂无图片</p>
+            </div>
+          </div>
+          
+          <div class="info-section">
+            <h1>{{ herb.name }}</h1>
+            <p v-if="herb.scientific" class="scientific-name">
+              <span class="label">学名</span>
+              {{ herb.scientific }}
+            </p>
+            <div class="tags">
+              <span v-if="herb.alias" class="tag">
+                <span class="icon">🏷️</span> 别名：{{ herb.alias }}
+              </span>
+              <span v-if="herb.category" class="tag category">
+                <span class="icon">📂</span> {{ herb.category }}
+              </span>
+            </div>
+          </div>
         </div>
         
-        <div class="info-section">
-          <h1>{{ herb.name }}</h1>
-          <p v-if="herb.scientific" class="scientific">{{ herb.scientific }}</p>
-          <p v-if="herb.alias" class="alias">别名：{{ herb.alias }}</p>
-          <p v-if="herb.category" class="category">分类：{{ herb.category }}</p>
-          
-          <div class="section">
-            <h3>简介</h3>
-            <p>{{ herb.description || '暂无描述' }}</p>
+        <div class="detail-content">
+          <div class="content-section">
+            <div class="section-header">
+              <span class="section-icon">📖</span>
+              <h3>简介</h3>
+            </div>
+            <p class="section-content">{{ herb.description || '暂无描述' }}</p>
           </div>
           
-          <div class="section">
-            <h3>功效</h3>
-            <p>{{ herb.effects || '暂无' }}</p>
+          <div class="content-section">
+            <div class="section-header">
+              <span class="section-icon">💊</span>
+              <h3>功效与作用</h3>
+            </div>
+            <p class="section-content">{{ herb.effects || '暂无' }}</p>
           </div>
           
-          <div class="section">
-            <h3>用法用量</h3>
-            <p>{{ herb.usage || '暂无' }}</p>
+          <div class="content-section">
+            <div class="section-header">
+              <span class="section-icon">🍵</span>
+              <h3>用法用量</h3>
+            </div>
+            <p class="section-content">{{ herb.usage || '暂无' }}</p>
           </div>
         </div>
       </div>
     </div>
     
-    <div v-else class="empty">未找到药材信息</div>
+    <div v-else class="empty">
+      <div class="empty-icon">❌</div>
+      <h3>未找到药材信息</h3>
+      <router-link to="/herbs" class="btn-primary">返回列表</router-link>
+    </div>
   </div>
 </template>
 
@@ -70,36 +106,70 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.herb-detail {
+.herb-detail-page {
   max-width: 900px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 32px 24px;
 }
 
-.loading, .empty {
+.back-nav {
+  margin-bottom: 24px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.back-link:hover {
+  color: var(--primary-color);
+  transform: translateX(-4px);
+}
+
+.back-link .icon {
+  font-size: 18px;
+}
+
+.loading {
   text-align: center;
-  padding: 60px 20px;
-  color: #999;
+  padding: 80px 20px;
 }
 
-.back {
-  display: inline-block;
-  margin-bottom: 20px;
-  color: #409eff;
-  text-decoration: none;
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--border-color);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
 }
 
-.back:hover {
-  text-decoration: underline;
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
-.content {
+.loading p {
+  color: var(--text-secondary);
+}
+
+.detail-card {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.detail-header {
   display: flex;
-  gap: 32px;
-  background: #fff;
-  border: 1px solid #e4e7ed;
-  border-radius: 8px;
-  padding: 24px;
+  gap: 40px;
+  padding: 40px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(6, 182, 212, 0.05));
+  border-bottom: 1px solid var(--border-color);
 }
 
 .image-section {
@@ -110,73 +180,182 @@ onMounted(async () => {
   width: 280px;
   height: 280px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
 }
 
 .no-image {
   width: 280px;
   height: 280px;
-  background: #f5f7fa;
-  border-radius: 8px;
+  background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+  border-radius: var(--radius-lg);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #999;
+  color: var(--text-light);
+  border: 2px dashed var(--border-color);
+}
+
+.no-image .icon {
+  font-size: 64px;
+  margin-bottom: 12px;
+  opacity: 0.5;
 }
 
 .info-section {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .info-section h1 {
-  margin: 0 0 12px;
-  color: #333;
-  font-size: 28px;
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 16px;
+  letter-spacing: -0.5px;
 }
 
-.scientific {
-  color: #666;
+.scientific-name {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  color: var(--text-secondary);
   font-style: italic;
-  margin: 0 0 8px;
-}
-
-.alias {
-  color: #666;
-  margin: 0 0 8px;
-}
-
-.category {
-  color: #409eff;
-  font-weight: 500;
-  margin: 0 0 20px;
-}
-
-.section {
-  margin-top: 24px;
-}
-
-.section h3 {
-  margin: 0 0 8px;
-  color: #333;
   font-size: 16px;
-  border-left: 3px solid #409eff;
-  padding-left: 10px;
+  margin-bottom: 20px;
 }
 
-.section p {
-  color: #666;
-  line-height: 1.8;
+.scientific-name .label {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--text-light);
+  font-size: 14px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.tag.category {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
+  color: var(--primary-color);
+}
+
+.tag .icon {
+  font-size: 14px;
+}
+
+.detail-content {
+  padding: 40px;
+}
+
+.content-section {
+  margin-bottom: 32px;
+}
+
+.content-section:last-child {
+  margin-bottom: 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--bg-tertiary);
+}
+
+.section-icon {
+  font-size: 22px;
+}
+
+.section-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
   margin: 0;
 }
 
+.section-content {
+  color: var(--text-secondary);
+  line-height: 1.8;
+  font-size: 15px;
+  margin: 0;
+}
+
+.empty {
+  text-align: center;
+  padding: 80px 20px;
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.empty-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  opacity: 0.6;
+}
+
+.empty h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+  color: #fff;
+  text-decoration: none;
+  border-radius: var(--radius);
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
 @media (max-width: 768px) {
-  .content {
+  .detail-header {
     flex-direction: column;
+    padding: 24px;
   }
   
   .herb-image, .no-image {
     width: 100%;
-    height: 200px;
+    height: 240px;
+  }
+  
+  .info-section h1 {
+    font-size: 28px;
+  }
+  
+  .detail-content {
+    padding: 24px;
   }
 }
 </style>

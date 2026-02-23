@@ -1,48 +1,67 @@
 <template>
-  <div class="recognize">
-    <div class="upload-area" @dragover.prevent @drop.prevent="handleDrop">
-      <input 
-        ref="fileInput" 
-        type="file" 
-        accept="image/*" 
-        @change="handleFileChange"
-        style="display: none"
-      />
-      
-      <div v-if="!previewUrl" class="upload-placeholder" @click="triggerUpload">
-        <div class="upload-icon">📷</div>
-        <p>点击或拖拽上传图片</p>
-        <p class="hint">支持 JPG, PNG, GIF, WEBP，最大 5MB</p>
-      </div>
-      
-      <div v-else class="preview-container">
-        <img :src="previewUrl" alt="预览" class="preview-image" />
-        <div class="preview-actions">
-          <button @click="triggerUpload" class="btn-secondary">重新选择</button>
-          <button @click="handleRecognize" :disabled="recognizing" class="btn-primary">
-            {{ recognizing ? '识别中...' : '开始识别' }}
-          </button>
-        </div>
-      </div>
+  <div class="recognize-page">
+    <div class="page-header">
+      <h1>📷 药材识别</h1>
+      <p>上传图片，AI 智能识别中草药</p>
     </div>
 
-    <div v-if="result" class="result">
-      <h2>识别结果</h2>
-      <div class="result-card">
-        <div class="result-image">
-          <img :src="apiUrl + result.image_url" :alt="result.herb_name" />
-        </div>
-        <div class="result-info">
-          <h3>{{ result.herb_name }}</h3>
-          <p class="confidence">置信度：{{ result.confidence }}%</p>
-          <router-link :to="`/herb/${result.herb_id}`" class="btn-detail">
-            查看详情
-          </router-link>
+    <div class="recognize-container">
+      <div class="upload-section">
+        <div class="upload-area" @dragover.prevent @drop.prevent="handleDrop">
+          <input 
+            ref="fileInput" 
+            type="file" 
+            accept="image/*" 
+            @change="handleFileChange"
+            style="display: none"
+          />
+          
+          <div v-if="!previewUrl" class="upload-placeholder" @click="triggerUpload">
+            <div class="upload-icon">📷</div>
+            <h3>点击或拖拽上传图片</h3>
+            <p class="hint">支持 JPG, PNG, GIF, WEBP 格式，最大 5MB</p>
+          </div>
+          
+          <div v-else class="preview-container">
+            <img :src="previewUrl" alt="预览" class="preview-image" />
+            <div class="preview-actions">
+              <button @click="triggerUpload" class="btn-secondary">
+                <span class="icon">🔄</span> 重新选择
+              </button>
+              <button @click="handleRecognize" :disabled="recognizing" class="btn-primary">
+                <span class="icon">{{ recognizing ? '⏳' : '🔍' }}</span>
+                {{ recognizing ? '识别中...' : '开始识别' }}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div v-if="error" class="error">{{ error }}</div>
+      <div v-if="result" class="result-section">
+        <div class="result-header">
+          <h2>✅ 识别结果</h2>
+          <span class="confidence-badge">{{ result.confidence }}% 置信度</span>
+        </div>
+        
+        <div class="result-card">
+          <div class="result-image">
+            <img :src="apiUrl + result.image_url" :alt="result.herb_name" />
+          </div>
+          <div class="result-info">
+            <h3>{{ result.herb_name }}</h3>
+            <p class="confidence">置信度：<strong>{{ result.confidence }}%</strong></p>
+            <router-link :to="`/herb/${result.herb_id}`" class="btn-detail">
+              <span class="icon">📖</span> 查看详情
+            </router-link>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="error" class="error-message">
+        <span class="icon">⚠️</span>
+        {{ error }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -109,25 +128,56 @@ async function handleRecognize() {
 </script>
 
 <style scoped>
-.recognize {
-  max-width: 800px;
+.recognize-page {
+  max-width: 900px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 32px 24px;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.page-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.page-header p {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.recognize-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.upload-section {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  box-shadow: var(--shadow-md);
 }
 
 .upload-area {
-  border: 2px dashed #dcdfe6;
-  border-radius: 8px;
-  background: #fafafa;
-  min-height: 300px;
+  border: 3px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  min-height: 350px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: border-color 0.3s;
+  transition: all 0.3s;
 }
 
 .upload-area:hover {
-  border-color: #409eff;
+  border-color: var(--primary-color);
+  background: rgba(16, 185, 129, 0.02);
 }
 
 .upload-placeholder {
@@ -137,18 +187,21 @@ async function handleRecognize() {
 }
 
 .upload-icon {
-  font-size: 64px;
-  margin-bottom: 16px;
+  font-size: 72px;
+  margin-bottom: 20px;
+  opacity: 0.8;
 }
 
-.upload-placeholder p {
-  margin: 8px 0;
-  color: #666;
+.upload-placeholder h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
 }
 
 .hint {
-  font-size: 12px;
-  color: #999;
+  font-size: 14px;
+  color: var(--text-light);
 }
 
 .preview-container {
@@ -159,72 +212,125 @@ async function handleRecognize() {
 .preview-image {
   max-width: 100%;
   max-height: 400px;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   display: block;
-  margin: 0 auto 20px;
+  margin: 0 auto 24px;
+  box-shadow: var(--shadow-md);
 }
 
 .preview-actions {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   justify-content: center;
 }
 
 .btn-secondary {
-  padding: 10px 24px;
-  background: #fff;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: var(--bg-primary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius);
   cursor: pointer;
-  color: #666;
+  color: var(--text-primary);
+  font-weight: 500;
+  transition: all 0.2s;
 }
 
 .btn-secondary:hover {
-  border-color: #409eff;
-  color: #409eff;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
 }
 
 .btn-primary {
-  padding: 10px 24px;
-  background: #409eff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 32px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius);
   cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s;
+  box-shadow: var(--shadow-md);
 }
 
 .btn-primary:hover {
-  background: #66b1ff;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 .btn-primary:disabled {
-  background: #a0cfff;
+  background: var(--text-light);
   cursor: not-allowed;
+  transform: none;
 }
 
-.result {
-  margin-top: 32px;
+.result-section {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  box-shadow: var(--shadow-md);
+  animation: slideIn 0.4s ease;
 }
 
-.result h2 {
-  margin-bottom: 16px;
-  color: #333;
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.result-header h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.confidence-badge {
+  padding: 6px 16px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+  color: #fff;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .result-card {
   display: flex;
   gap: 24px;
-  background: #fff;
-  border: 1px solid #e4e7ed;
-  border-radius: 8px;
-  padding: 20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.result-image {
+  flex-shrink: 0;
 }
 
 .result-image img {
-  width: 150px;
-  height: 150px;
+  width: 180px;
+  height: 180px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
 
 .result-info {
@@ -235,38 +341,74 @@ async function handleRecognize() {
 }
 
 .result-info h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
   margin: 0 0 12px;
-  color: #333;
-  font-size: 20px;
 }
 
 .confidence {
-  color: #67c23a;
-  font-weight: 500;
-  margin-bottom: 16px;
+  color: var(--text-secondary);
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+.confidence strong {
+  color: var(--primary-color);
+  font-size: 18px;
 }
 
 .btn-detail {
-  display: inline-block;
-  padding: 8px 20px;
-  background: #409eff;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
   color: #fff;
   text-decoration: none;
-  border-radius: 4px;
+  border-radius: var(--radius);
   text-align: center;
   width: fit-content;
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: var(--shadow-md);
 }
 
 .btn-detail:hover {
-  background: #66b1ff;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
-.error {
-  margin-top: 16px;
-  padding: 12px;
-  background: #fef0f0;
-  color: #f56c6c;
-  border-radius: 4px;
-  text-align: center;
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: #fef2f2;
+  color: var(--danger-color);
+  border-radius: var(--radius);
+  font-size: 15px;
+  border: 1px solid #fecaca;
+}
+
+.error-message .icon {
+  font-size: 20px;
+}
+
+@media (max-width: 768px) {
+  .result-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .result-info h3 {
+    font-size: 20px;
+  }
+  
+  .btn-detail {
+    width: 100%;
+    justify-content: center;
+  }
 }
 </style>

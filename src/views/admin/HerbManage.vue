@@ -3,9 +3,11 @@
     <template #title>药材管理</template>
     
     <div class="toolbar">
-      <button @click="handleCreate" class="btn-primary">新增药材</button>
+      <button @click="handleCreate" class="btn-primary">
+        <span class="icon">➕</span> 新增药材
+      </button>
       <button @click="handleBatchDelete" :disabled="selectedIds.length === 0" class="btn-danger">
-        批量删除 ({{ selectedIds.length }})
+        <span class="icon">🗑️</span> 批量删除 ({{ selectedIds.length }})
       </button>
     </div>
 
@@ -13,7 +15,7 @@
       <table class="table">
         <thead>
           <tr>
-            <th><input type="checkbox" @change="toggleAll" :checked="isAllSelected" /></th>
+            <th class="checkbox-col"><input type="checkbox" @change="toggleAll" :checked="isAllSelected" /></th>
             <th>ID</th>
             <th>名称</th>
             <th>学名</th>
@@ -24,68 +26,96 @@
         <tbody>
           <tr v-for="item in list" :key="item.id">
             <td><input type="checkbox" :value="item.id" v-model="selectedIds" /></td>
-            <td>{{ item.id }}</td>
-            <td>{{ item.name }}</td>
-            <td>{{ item.scientific || '-' }}</td>
-            <td>{{ item.category || '-' }}</td>
+            <td class="text-muted">#{{ item.id }}</td>
             <td>
-              <button @click="handleEdit(item)" class="btn-link">编辑</button>
-              <button @click="handleDelete(item.id)" class="btn-link danger">删除</button>
+              <div class="name-cell">
+                <span class="name">{{ item.name }}</span>
+              </div>
+            </td>
+            <td class="text-muted">{{ item.scientific || '-' }}</td>
+            <td><span v-if="item.category" class="badge">{{ item.category }}</span><span v-else class="text-muted">-</span></td>
+            <td>
+              <button @click="handleEdit(item)" class="btn-icon btn-edit" title="编辑">
+                <span class="icon">✏️</span>
+              </button>
+              <button @click="handleDelete(item.id)" class="btn-icon btn-delete" title="删除">
+                <span class="icon">🗑️</span>
+              </button>
             </td>
           </tr>
         </tbody>
       </table>
+      
+      <div v-if="!loading && list.length === 0" class="empty-table">
+        <span class="empty-icon">📭</span>
+        <p>暂无数据</p>
+      </div>
     </div>
 
     <div v-if="!loading && list.length > 0" class="pagination">
-      <button :disabled="page <= 1" @click="loadPage(page - 1)">上一页</button>
-      <span>第 {{ page }} 页 / 共 {{ totalPages }} 页</span>
-      <button :disabled="page >= totalPages" @click="loadPage(page + 1)">下一页</button>
+      <button :disabled="page <= 1" @click="loadPage(page - 1)">
+        <span class="icon">⬅️</span> 上一页
+      </button>
+      <span class="page-info">第 {{ page }} 页 / 共 {{ totalPages }} 页</span>
+      <button :disabled="page >= totalPages" @click="loadPage(page + 1)">
+        下一页 <span class="icon">➡️</span>
+      </button>
     </div>
 
     <!-- 编辑/新增 弹窗 -->
     <div v-if="showModal" class="modal-overlay" @click.self="showModal = false">
       <div class="modal">
-        <h3>{{ editingItem ? '编辑药材' : '新增药材' }}</h3>
-        <form @submit.prevent="handleSubmit">
-          <div class="form-item">
-            <label>名称 *</label>
-            <input v-model="formData.name" required maxlength="64" />
-          </div>
-          <div class="form-item">
-            <label>学名</label>
-            <input v-model="formData.scientific" />
-          </div>
-          <div class="form-item">
-            <label>别名</label>
-            <input v-model="formData.alias" />
-          </div>
-          <div class="form-item">
-            <label>分类</label>
-            <input v-model="formData.category" />
-          </div>
-          <div class="form-item">
-            <label>简介</label>
-            <textarea v-model="formData.description" rows="3"></textarea>
-          </div>
-          <div class="form-item">
-            <label>功效</label>
-            <textarea v-model="formData.effects" rows="3"></textarea>
-          </div>
-          <div class="form-item">
-            <label>用法用量</label>
-            <textarea v-model="formData.usage" rows="2"></textarea>
-          </div>
-          <div class="form-item">
-            <label>图片</label>
-            <input type="file" @change="handleImageChange" accept="image/*" />
-            <img v-if="previewImage" :src="previewImage" class="preview" />
-          </div>
-          <div class="modal-actions">
-            <button type="button" @click="showModal = false">取消</button>
-            <button type="submit" :disabled="submitting">{{ submitting ? '保存中...' : '保存' }}</button>
-          </div>
-        </form>
+        <div class="modal-header">
+          <h3>{{ editingItem ? '编辑药材' : '新增药材' }}</h3>
+          <button @click="showModal = false" class="btn-close">✕</button>
+        </div>
+        <div class="modal-body">
+          <form @submit.prevent="handleSubmit">
+            <div class="form-grid">
+              <div class="form-item required">
+                <label>名称</label>
+                <input v-model="formData.name" required maxlength="64" placeholder="请输入药材名称" />
+              </div>
+              <div class="form-item">
+                <label>学名</label>
+                <input v-model="formData.scientific" placeholder="拉丁学名" />
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="form-item">
+                <label>别名</label>
+                <input v-model="formData.alias" placeholder="常见别名" />
+              </div>
+              <div class="form-item">
+                <label>分类</label>
+                <input v-model="formData.category" placeholder="如：消食药" />
+              </div>
+            </div>
+            <div class="form-item">
+              <label>简介</label>
+              <textarea v-model="formData.description" rows="3" placeholder="药材简介"></textarea>
+            </div>
+            <div class="form-item">
+              <label>功效</label>
+              <textarea v-model="formData.effects" rows="3" placeholder="功效与作用"></textarea>
+            </div>
+            <div class="form-item">
+              <label>用法用量</label>
+              <textarea v-model="formData.usage" rows="2" placeholder="用法用量说明"></textarea>
+            </div>
+            <div class="form-item">
+              <label>图片</label>
+              <input type="file" @change="handleImageChange" accept="image/*" class="file-input" />
+              <img v-if="previewImage" :src="previewImage" class="preview" />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" @click="showModal = false" class="btn-secondary">取消</button>
+          <button type="button" @click="handleSubmit" :disabled="submitting" class="btn-primary">
+            {{ submitting ? '保存中...' : '保存' }}
+          </button>
+        </div>
       </div>
     </div>
   </AdminLayout>
@@ -207,17 +237,11 @@ function handleImageChange(e: Event) {
 async function handleSubmit() {
   submitting.value = true
   try {
-    let image_url = ''
     if (selectedImage.value) {
-      const res = await uploadHerbImage(selectedImage.value)
-      image_url = res.data.image_url
+      await uploadHerbImage(selectedImage.value)
     }
 
     const data: AdminHerbCreate & { id?: number } = { ...formData.value }
-    if (image_url) {
-      // @ts-ignore
-      data.image_url = image_url
-    }
 
     if (editingItem.value) {
       await updateHerb(data as AdminHerbUpdate)
@@ -242,41 +266,66 @@ onMounted(() => {
 .toolbar {
   display: flex;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .btn-primary {
-  padding: 8px 20px;
-  background: #1890ff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius);
   cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 .btn-primary:disabled {
-  background: #91d5ff;
+  background: var(--text-light);
   cursor: not-allowed;
+  transform: none;
 }
 
 .btn-danger {
-  padding: 8px 20px;
-  background: #ff4d4f;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, var(--danger-color), #dc2626);
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius);
   cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 .btn-danger:disabled {
-  background: #ffa39e;
+  background: var(--text-light);
   cursor: not-allowed;
+  transform: none;
 }
 
 .table-container {
-  background: #fff;
-  border-radius: 4px;
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
 .table {
@@ -285,56 +334,129 @@ onMounted(() => {
 }
 
 .table th, .table td {
-  padding: 12px 16px;
+  padding: 16px;
   text-align: left;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .table th {
-  background: #fafafa;
-  font-weight: 500;
+  background: var(--bg-tertiary);
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .table tr:hover {
-  background: #fafafa;
+  background: var(--bg-secondary);
 }
 
-.btn-link {
-  background: none;
-  border: none;
-  color: #1890ff;
+.table .checkbox-col {
+  width: 50px;
+  text-align: center;
+}
+
+.text-muted {
+  color: var(--text-light);
+}
+
+.name-cell .name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--primary-color);
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
   cursor: pointer;
-  padding: 0;
-  margin-right: 12px;
+  transition: all 0.2s;
+  font-size: 16px;
 }
 
-.btn-link.danger {
-  color: #ff4d4f;
+.btn-icon:hover {
+  transform: scale(1.1);
+}
+
+.btn-edit:hover {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: var(--primary-color);
+}
+
+.btn-delete:hover {
+  background: #fef2f2;
+  border-color: var(--danger-color);
+}
+
+.empty-table {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+}
+
+.empty-icon {
+  font-size: 64px;
+  display: block;
+  margin-bottom: 12px;
+  opacity: 0.5;
 }
 
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
   margin-top: 24px;
-  background: #fff;
-  padding: 16px;
-  border-radius: 4px;
+  padding: 20px;
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
 }
 
 .pagination button {
-  padding: 8px 20px;
-  background: #1890ff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius);
   cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.pagination button:hover {
+  transform: translateY(-1px);
 }
 
 .pagination button:disabled {
-  background: #91d5ff;
+  background: var(--text-light);
   cursor: not-allowed;
+  transform: none;
+}
+
+.page-info {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .modal-overlay {
@@ -343,26 +465,69 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  backdrop-filter: blur(4px);
 }
 
 .modal {
-  background: #fff;
-  border-radius: 8px;
-  padding: 24px;
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
   max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--text-primary);
+}
+
+.btn-close {
+  width: 36px;
+  height: 36px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.btn-close:hover {
+  background: #fef2f2;
+  color: var(--danger-color);
+  border-color: var(--danger-color);
+}
+
+.modal-body {
+  flex: 1;
+  padding: 24px;
   overflow-y: auto;
 }
 
-.modal h3 {
-  margin: 0 0 20px;
-  color: #333;
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 .form-item {
@@ -372,59 +537,85 @@ onMounted(() => {
 .form-item label {
   display: block;
   margin-bottom: 8px;
-  color: #666;
+  color: var(--text-primary);
+  font-weight: 500;
   font-size: 14px;
+}
+
+.form-item.required label::after {
+  content: ' *';
+  color: var(--danger-color);
 }
 
 .form-item input,
 .form-item textarea {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
+  padding: 10px 14px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius);
   font-size: 14px;
-  box-sizing: border-box;
+  transition: all 0.2s;
+  background: var(--bg-primary);
 }
 
 .form-item input:focus,
 .form-item textarea:focus {
-  border-color: #1890ff;
+  border-color: var(--primary-color);
   outline: none;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.form-item .file-input {
+  padding: 8px;
+  background: var(--bg-secondary);
 }
 
 .form-item .preview {
-  margin-top: 8px;
+  margin-top: 12px;
   max-width: 200px;
   max-height: 200px;
-  border-radius: 4px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
 
-.modal-actions {
+.modal-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 24px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-secondary);
 }
 
-.modal-actions button {
-  padding: 8px 24px;
-  border-radius: 4px;
+.btn-secondary {
+  padding: 10px 24px;
+  background: var(--bg-primary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius);
   cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
 }
 
-.modal-actions button:first-child {
-  background: #fff;
-  border: 1px solid #d9d9d9;
+.btn-secondary:hover {
+  border-color: var(--text-secondary);
 }
 
-.modal-actions button:last-child {
-  background: #1890ff;
-  color: #fff;
-  border: none;
+.modal-footer .btn-primary {
+  padding: 10px 32px;
 }
 
-.modal-actions button:last-child:disabled {
-  background: #91d5ff;
-  cursor: not-allowed;
+@media (max-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .table {
+    font-size: 13px;
+  }
+  
+  .table th, .table td {
+    padding: 12px 8px;
+  }
 }
 </style>

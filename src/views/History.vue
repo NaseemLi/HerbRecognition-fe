@@ -1,39 +1,62 @@
 <template>
-  <div class="history">
-    <h1>识别历史</h1>
-    
-    <div v-if="loading" class="loading">加载中...</div>
+  <div class="history-page">
+    <div class="page-header">
+      <h1>📜 识别历史</h1>
+      <p>查看您的识别记录</p>
+    </div>
+
+    <div v-if="loading" class="loading">
+      <div class="loading-spinner"></div>
+      <p>加载中...</p>
+    </div>
     
     <div v-else-if="list.length === 0" class="empty">
-      暂无识别记录
+      <div class="empty-icon">📭</div>
+      <h3>暂无识别记录</h3>
+      <p>快去上传第一张图片吧</p>
+      <router-link to="/recognize" class="btn-primary">
+        <span class="icon">📷</span> 去识别
+      </router-link>
     </div>
     
     <div v-else class="list">
       <div v-for="item in list" :key="item.id" class="item">
-        <img :src="apiUrl + item.image_url" :alt="item.herb_name" class="item-image" />
+        <div class="item-image-wrapper">
+          <img :src="apiUrl + item.image_url" :alt="item.herb_name" class="item-image" />
+          <span class="item-confidence">{{ item.confidence }}%</span>
+        </div>
         <div class="item-info">
           <h3>{{ item.herb_name }}</h3>
-          <p class="confidence">置信度：{{ item.confidence }}%</p>
-          <p class="date">{{ formatDate(item.created_at) }}</p>
+          <p class="item-date">
+            <span class="icon">🕐</span>
+            {{ formatDate(item.created_at) }}
+          </p>
         </div>
         <div class="item-actions">
           <router-link :to="`/herb/${item.herb_id}`" class="btn-detail">
-            查看详情
+            <span class="icon">📖</span> 详情
           </router-link>
-          <button @click="handleDelete(item.id)" class="btn-delete">
-            删除
+          <button @click="handleDelete(item.id)" class="btn-delete" title="删除">
+            <span class="icon">🗑️</span>
           </button>
         </div>
       </div>
     </div>
 
     <div v-if="!loading && list.length > 0" class="pagination">
-      <button :disabled="page <= 1" @click="loadPage(page - 1)">上一页</button>
-      <span>第 {{ page }} 页 / 共 {{ totalPages }} 页</span>
-      <button :disabled="page >= totalPages" @click="loadPage(page + 1)">下一页</button>
+      <button :disabled="page <= 1" @click="loadPage(page - 1)">
+        <span class="icon">⬅️</span> 上一页
+      </button>
+      <span class="page-info">第 {{ page }} 页 / 共 {{ totalPages }} 页</span>
+      <button :disabled="page >= totalPages" @click="loadPage(page + 1)">
+        下一页 <span class="icon">➡️</span>
+      </button>
     </div>
 
-    <div v-if="error" class="error">{{ error }}</div>
+    <div v-if="error" class="error-message">
+      <span class="icon">⚠️</span>
+      {{ error }}
+    </div>
   </div>
 </template>
 
@@ -82,7 +105,24 @@ async function handleDelete(id: number) {
 }
 
 function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleString('zh-CN')
+  const date = new Date(dateStr)
+  const now = new Date()
+  const diff = now.getTime() - date.getTime()
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+  
+  if (days === 0) {
+    const hours = Math.floor(diff / (1000 * 60 * 60))
+    if (hours === 0) {
+      const minutes = Math.floor(diff / (1000 * 60))
+      return `${minutes}分钟前`
+    }
+    return `${hours}小时前`
+  } else if (days === 1) {
+    return '昨天'
+  } else if (days < 7) {
+    return `${days}天前`
+  }
+  return date.toLocaleDateString('zh-CN')
 }
 
 onMounted(() => {
@@ -91,21 +131,95 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.history {
-  max-width: 800px;
+.history-page {
+  max-width: 900px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 32px 24px;
 }
 
-.history h1 {
-  margin-bottom: 24px;
-  color: #333;
-}
-
-.loading, .empty {
+.page-header {
   text-align: center;
-  padding: 60px 20px;
-  color: #999;
+  margin-bottom: 32px;
+}
+
+.page-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.page-header p {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.loading {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--border-color);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading p {
+  color: var(--text-secondary);
+}
+
+.empty {
+  text-align: center;
+  padding: 80px 20px;
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.empty-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  opacity: 0.6;
+}
+
+.empty h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.empty p {
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+  color: #fff;
+  text-decoration: none;
+  border-radius: var(--radius);
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 .list {
@@ -116,19 +230,42 @@ onMounted(() => {
 
 .item {
   display: flex;
-  gap: 16px;
-  background: #fff;
-  border: 1px solid #e4e7ed;
-  border-radius: 8px;
-  padding: 16px;
   align-items: center;
+  gap: 20px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  transition: all 0.3s;
+}
+
+.item:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.item-image-wrapper {
+  position: relative;
+  flex-shrink: 0;
 }
 
 .item-image {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: var(--radius);
+}
+
+.item-confidence {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  padding: 4px 10px;
+  background: rgba(16, 185, 129, 0.95);
+  color: #fff;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .item-info {
@@ -136,84 +273,125 @@ onMounted(() => {
 }
 
 .item-info h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
   margin: 0 0 8px;
-  color: #333;
-  font-size: 16px;
 }
 
-.confidence {
-  color: #67c23a;
+.item-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
   font-size: 14px;
-  margin: 0 0 4px;
-}
-
-.date {
-  color: #999;
-  font-size: 12px;
   margin: 0;
 }
 
 .item-actions {
   display: flex;
   gap: 8px;
+  align-items: center;
 }
 
 .btn-detail {
-  padding: 6px 16px;
-  background: #409eff;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
   color: #fff;
   text-decoration: none;
-  border-radius: 4px;
+  border-radius: var(--radius);
   font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
 }
 
 .btn-detail:hover {
-  background: #66b1ff;
+  transform: translateY(-1px);
 }
 
 .btn-delete {
-  padding: 6px 16px;
-  background: #fff;
-  border: 1px solid #f56c6c;
-  color: #f56c6c;
-  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
   cursor: pointer;
-  font-size: 14px;
+  transition: all 0.2s;
 }
 
 .btn-delete:hover {
-  background: #f56c6c;
-  color: #fff;
+  background: #fef2f2;
+  border-color: var(--danger-color);
 }
 
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
-  margin-top: 24px;
+  gap: 20px;
+  margin-top: 32px;
+  padding: 20px;
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 .pagination button {
-  padding: 8px 20px;
-  background: #409eff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius);
   cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.pagination button:hover {
+  transform: translateY(-1px);
 }
 
 .pagination button:disabled {
-  background: #a0cfff;
+  background: var(--text-light);
   cursor: not-allowed;
+  transform: none;
 }
 
-.error {
-  margin-top: 16px;
-  padding: 12px;
-  background: #fef0f0;
-  color: #f56c6c;
-  border-radius: 4px;
-  text-align: center;
+.page-info {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  margin-top: 20px;
+  background: #fef2f2;
+  color: var(--danger-color);
+  border-radius: var(--radius);
+  border: 1px solid #fecaca;
+}
+
+@media (max-width: 768px) {
+  .item {
+    flex-wrap: wrap;
+  }
+  
+  .item-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }
 </style>
