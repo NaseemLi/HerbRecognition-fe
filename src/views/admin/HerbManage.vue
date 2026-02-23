@@ -10,6 +10,10 @@
         <p class="subtitle">管理系统中的所有药材数据</p>
       </div>
       <div class="header-actions">
+        <div class="admin-tabs">
+          <router-link to="/admin/herbs" class="admin-tab active">药材管理</router-link>
+          <router-link to="/admin/users" class="admin-tab">用户管理</router-link>
+        </div>
         <div class="user-info">
           <div class="avatar">{{ userStore.user?.username.charAt(0).toUpperCase() }}</div>
           <span class="username">{{ userStore.user?.username }}</span>
@@ -329,6 +333,34 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 8px;
+  background: var(--bg-tertiary);
+  padding: 4px;
+  border-radius: var(--radius);
+}
+
+.admin-tab {
+  padding: 8px 16px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: calc(var(--radius) - 2px);
+  transition: all 0.2s;
+}
+
+.admin-tab:hover {
+  color: var(--text-primary);
+}
+
+.admin-tab.active {
+  background: var(--bg-primary);
+  color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
 }
 
 .user-info {

@@ -10,6 +10,10 @@
         <p class="subtitle">管理系统用户和权限</p>
       </div>
       <div class="header-actions">
+        <div class="admin-tabs">
+          <router-link to="/admin/herbs" class="admin-tab">药材管理</router-link>
+          <router-link to="/admin/users" class="admin-tab active">用户管理</router-link>
+        </div>
         <div class="user-info">
           <div class="avatar">{{ userStore.user?.username.charAt(0).toUpperCase() }}</div>
           <span class="username">{{ userStore.user?.username }}</span>
