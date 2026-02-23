@@ -1,6 +1,23 @@
 <template>
-  <AdminLayout>
-    <template #title>用户管理</template>
+  <div class="admin-page">
+    <div class="page-nav">
+      <BackButton default-back="/" text="返回前台" />
+    </div>
+    
+    <div class="page-header">
+      <div>
+        <h1>用户管理</h1>
+        <p class="subtitle">管理系统用户和权限</p>
+      </div>
+      <div class="header-actions">
+        <div class="user-info">
+          <div class="avatar">{{ userStore.user?.username.charAt(0).toUpperCase() }}</div>
+          <span class="username">{{ userStore.user?.username }}</span>
+          <span class="role-badge" v-if="userStore.user?.role === 'admin'">管理员</span>
+        </div>
+        <button @click="handleLogout" class="btn-logout">退出</button>
+      </div>
+    </div>
 
     <div class="table-container">
       <table class="table">
@@ -44,14 +61,19 @@
       <span class="page-info">第 {{ page }} 页 / 共 {{ totalPages }} 页</span>
       <button :disabled="page >= totalPages" @click="loadPage(page + 1)">下一页</button>
     </div>
-  </AdminLayout>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import AdminLayout from '@/layouts/AdminLayout.vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import BackButton from '@/components/BackButton.vue'
 import { getUserList, updateUserRole } from '@/api/user'
 import type { User } from '@/api/user'
+
+const router = useRouter()
+const userStore = useUserStore()
 
 const list = ref<User[]>([])
 const loading = ref(true)
@@ -90,12 +112,106 @@ function handleResetPassword(_user: User) {
   alert('重置密码功能请联系系统管理员')
 }
 
+function handleLogout() {
+  userStore.logout()
+  router.push('/login')
+}
+
 onMounted(() => {
   loadPage(1)
 })
 </script>
 
 <style scoped>
+.admin-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  min-height: 100vh;
+}
+
+.page-nav {
+  margin-bottom: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.page-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 8px;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.username {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.role-badge {
+  padding: 4px 10px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+  color: #fff;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.btn-logout {
+  padding: 8px 16px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background: #fef2f2;
+  border-color: var(--danger-color);
+  color: var(--danger-color);
+}
+
 .table-container {
   background: var(--bg-primary);
   border-radius: var(--radius-xl);
