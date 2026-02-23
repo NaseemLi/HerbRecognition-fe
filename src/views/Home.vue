@@ -2,6 +2,12 @@
   <div class="home">
     <header class="header">
       <h1>中草药识别系统</h1>
+      <nav class="nav">
+        <router-link to="/recognize">识别</router-link>
+        <router-link to="/herbs">药材查询</router-link>
+        <router-link to="/history">历史记录</router-link>
+        <router-link v-if="userStore.user?.role === 'admin'" to="/admin/herbs" class="admin-link">管理后台</router-link>
+      </nav>
       <div class="user-info">
         <span>欢迎，{{ userStore.user?.username }}</span>
         <button @click="handleLogout">退出</button>
@@ -43,6 +49,25 @@ function handleLogout() {
 .header h1 {
   font-size: 20px;
   margin: 0;
+}
+
+.nav {
+  display: flex;
+  gap: 20px;
+}
+
+.nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav a:hover {
+  text-decoration: underline;
+}
+
+.admin-link {
+  color: #ffec3d;
 }
 
 .user-info {

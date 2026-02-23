@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - herb-network
+
+  backend:
+    image: herb-backend:latest
+    restart: always
+    networks:
+      - herb-network
+    environment:
+      - TZ=Asia/Shanghai
+
+networks:
+  herb-network:
+    driver: bridge
