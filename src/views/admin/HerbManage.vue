@@ -3,7 +3,7 @@
     <div class="page-nav">
       <BackButton default-back="/" text="返回前台" />
     </div>
-    
+
     <div class="page-header">
       <div>
         <h1>药材管理</h1>
@@ -11,7 +11,7 @@
       </div>
       <div class="header-actions">
         <div class="admin-tabs">
-          <router-link to="/admin/herbs" class="admin-tab active">药材管理</router-link>
+          <router-link to="/admin/herbs" class="admin-tab">药材管理</router-link>
           <router-link to="/admin/users" class="admin-tab">用户管理</router-link>
         </div>
         <div class="user-info">
@@ -22,7 +22,7 @@
         <button @click="handleLogout" class="btn-logout">退出</button>
       </div>
     </div>
-    
+
     <div class="toolbar">
       <button @click="handleCreate" class="btn-primary">新增药材</button>
       <button @click="handleBatchDelete" :disabled="selectedIds.length === 0" class="btn-danger">
@@ -63,7 +63,7 @@
           </tr>
         </tbody>
       </table>
-      
+
       <div v-if="!loading && list.length === 0" class="empty-table">
         <p>暂无数据</p>
       </div>
@@ -357,7 +357,7 @@ onMounted(() => {
   color: var(--text-primary);
 }
 
-.admin-tab.active {
+.admin-tab.router-link-exact-active {
   background: var(--bg-primary);
   color: var(--primary-color);
   box-shadow: var(--shadow-sm);
@@ -769,15 +769,15 @@ onMounted(() => {
     flex-direction: column;
     gap: 16px;
   }
-  
+
   .form-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .table {
     font-size: 13px;
   }
-  
+
   .table th, .table td {
     padding: 12px 8px;
   }

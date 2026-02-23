@@ -3,7 +3,7 @@
     <div class="page-nav">
       <BackButton default-back="/" text="返回前台" />
     </div>
-    
+
     <div class="page-header">
       <div>
         <h1>用户管理</h1>
@@ -12,7 +12,7 @@
       <div class="header-actions">
         <div class="admin-tabs">
           <router-link to="/admin/herbs" class="admin-tab">药材管理</router-link>
-          <router-link to="/admin/users" class="admin-tab active">用户管理</router-link>
+          <router-link to="/admin/users" class="admin-tab">用户管理</router-link>
         </div>
         <div class="user-info">
           <div class="avatar">{{ userStore.user?.username.charAt(0).toUpperCase() }}</div>
@@ -53,7 +53,7 @@
           </tr>
         </tbody>
       </table>
-      
+
       <div v-if="!loading && list.length === 0" class="empty-table">
         <p>暂无用户数据</p>
       </div>
@@ -163,6 +163,34 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 8px;
+  background: var(--bg-tertiary);
+  padding: 4px;
+  border-radius: var(--radius);
+}
+
+.admin-tab {
+  padding: 8px 16px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: calc(var(--radius) - 2px);
+  transition: all 0.2s;
+}
+
+.admin-tab:hover {
+  color: var(--text-primary);
+}
+
+.admin-tab.router-link-exact-active {
+  background: var(--bg-primary);
+  color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
 }
 
 .user-info {
