@@ -1,7 +1,7 @@
 <template>
   <div class="history-page">
     <div class="page-header">
-      <h1>📜 识别历史</h1>
+      <h1>识别历史</h1>
       <p>查看您的识别记录</p>
     </div>
 
@@ -11,12 +11,15 @@
     </div>
     
     <div v-else-if="list.length === 0" class="empty">
-      <div class="empty-icon">📭</div>
+      <div class="empty-icon">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="80" height="80" rx="40" fill="#f3f4f6"/>
+          <path d="M30 40L38 48L52 34" stroke="#9ca3af" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
       <h3>暂无识别记录</h3>
       <p>快去上传第一张图片吧</p>
-      <router-link to="/recognize" class="btn-primary">
-        <span class="icon">📷</span> 去识别
-      </router-link>
+      <router-link to="/recognize" class="btn-primary">去识别</router-link>
     </div>
     
     <div v-else class="list">
@@ -27,36 +30,22 @@
         </div>
         <div class="item-info">
           <h3>{{ item.herb_name }}</h3>
-          <p class="item-date">
-            <span class="icon">🕐</span>
-            {{ formatDate(item.created_at) }}
-          </p>
+          <p class="item-date">{{ formatDate(item.created_at) }}</p>
         </div>
         <div class="item-actions">
-          <router-link :to="`/herb/${item.herb_id}`" class="btn-detail">
-            <span class="icon">📖</span> 详情
-          </router-link>
-          <button @click="handleDelete(item.id)" class="btn-delete" title="删除">
-            <span class="icon">🗑️</span>
-          </button>
+          <router-link :to="`/herb/${item.herb_id}`" class="btn-detail">详情</router-link>
+          <button @click="handleDelete(item.id)" class="btn-delete" title="删除">删除</button>
         </div>
       </div>
     </div>
 
     <div v-if="!loading && list.length > 0" class="pagination">
-      <button :disabled="page <= 1" @click="loadPage(page - 1)">
-        <span class="icon">⬅️</span> 上一页
-      </button>
+      <button :disabled="page <= 1" @click="loadPage(page - 1)">上一页</button>
       <span class="page-info">第 {{ page }} 页 / 共 {{ totalPages }} 页</span>
-      <button :disabled="page >= totalPages" @click="loadPage(page + 1)">
-        下一页 <span class="icon">➡️</span>
-      </button>
+      <button :disabled="page >= totalPages" @click="loadPage(page + 1)">下一页</button>
     </div>
 
-    <div v-if="error" class="error-message">
-      <span class="icon">⚠️</span>
-      {{ error }}
-    </div>
+    <div v-if="error" class="error-message">{{ error }}</div>
   </div>
 </template>
 
@@ -186,9 +175,7 @@ onMounted(() => {
 }
 
 .empty-icon {
-  font-size: 80px;
   margin-bottom: 20px;
-  opacity: 0.6;
 }
 
 .empty h3 {
@@ -204,9 +191,7 @@ onMounted(() => {
 }
 
 .btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  display: inline-block;
   padding: 12px 28px;
   background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
   color: #fff;
@@ -280,9 +265,6 @@ onMounted(() => {
 }
 
 .item-date {
-  display: flex;
-  align-items: center;
-  gap: 6px;
   color: var(--text-secondary);
   font-size: 14px;
   margin: 0;
@@ -295,9 +277,6 @@ onMounted(() => {
 }
 
 .btn-detail {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
   padding: 8px 18px;
   background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
   color: #fff;
@@ -313,21 +292,20 @@ onMounted(() => {
 }
 
 .btn-delete {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
+  padding: 8px 16px;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
   cursor: pointer;
+  font-size: 14px;
+  color: var(--text-secondary);
   transition: all 0.2s;
 }
 
 .btn-delete:hover {
   background: #fef2f2;
   border-color: var(--danger-color);
+  color: var(--danger-color);
 }
 
 .pagination {
@@ -343,9 +321,6 @@ onMounted(() => {
 }
 
 .pagination button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   padding: 10px 24px;
   background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
   color: #fff;
@@ -373,15 +348,13 @@ onMounted(() => {
 }
 
 .error-message {
-  display: flex;
-  align-items: center;
-  gap: 12px;
   padding: 16px 24px;
   margin-top: 20px;
   background: #fef2f2;
   color: var(--danger-color);
   border-radius: var(--radius);
   border: 1px solid #fecaca;
+  text-align: center;
 }
 
 @media (max-width: 768px) {

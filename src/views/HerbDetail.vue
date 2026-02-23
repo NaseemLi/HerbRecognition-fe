@@ -8,7 +8,10 @@
     <div v-else-if="herb" class="detail">
       <div class="back-nav">
         <router-link to="/herbs" class="back-link">
-          <span class="icon">←</span> 返回药材列表
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4L6 10L12 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          返回药材列表
         </router-link>
       </div>
       
@@ -22,7 +25,10 @@
               class="herb-image"
             />
             <div v-else class="no-image">
-              <span class="icon">🌿</span>
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="64" height="64" rx="12" fill="#f3f4f6"/>
+                <path d="M32 20V44M20 32H44" stroke="#9ca3af" stroke-width="3" stroke-linecap="round"/>
+              </svg>
               <p>暂无图片</p>
             </div>
           </div>
@@ -35,10 +41,10 @@
             </p>
             <div class="tags">
               <span v-if="herb.alias" class="tag">
-                <span class="icon">🏷️</span> 别名：{{ herb.alias }}
+                <span class="label">别名</span> {{ herb.alias }}
               </span>
               <span v-if="herb.category" class="tag category">
-                <span class="icon">📂</span> {{ herb.category }}
+                {{ herb.category }}
               </span>
             </div>
           </div>
@@ -47,7 +53,6 @@
         <div class="detail-content">
           <div class="content-section">
             <div class="section-header">
-              <span class="section-icon">📖</span>
               <h3>简介</h3>
             </div>
             <p class="section-content">{{ herb.description || '暂无描述' }}</p>
@@ -55,7 +60,6 @@
           
           <div class="content-section">
             <div class="section-header">
-              <span class="section-icon">💊</span>
               <h3>功效与作用</h3>
             </div>
             <p class="section-content">{{ herb.effects || '暂无' }}</p>
@@ -63,7 +67,6 @@
           
           <div class="content-section">
             <div class="section-header">
-              <span class="section-icon">🍵</span>
               <h3>用法用量</h3>
             </div>
             <p class="section-content">{{ herb.usage || '暂无' }}</p>
@@ -73,7 +76,6 @@
     </div>
     
     <div v-else class="empty">
-      <div class="empty-icon">❌</div>
       <h3>未找到药材信息</h3>
       <router-link to="/herbs" class="btn-primary">返回列表</router-link>
     </div>
@@ -127,11 +129,14 @@ onMounted(async () => {
 
 .back-link:hover {
   color: var(--primary-color);
-  transform: translateX(-4px);
 }
 
-.back-link .icon {
-  font-size: 18px;
+.back-link svg {
+  transition: transform 0.2s;
+}
+
+.back-link:hover svg {
+  transform: translateX(-4px);
 }
 
 .loading {
@@ -197,10 +202,9 @@ onMounted(async () => {
   border: 2px dashed var(--border-color);
 }
 
-.no-image .icon {
-  font-size: 64px;
-  margin-bottom: 12px;
-  opacity: 0.5;
+.no-image p {
+  margin-top: 12px;
+  font-size: 14px;
 }
 
 .info-section {
@@ -244,7 +248,7 @@ onMounted(async () => {
 .tag {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   padding: 8px 16px;
   background: var(--bg-tertiary);
   color: var(--text-secondary);
@@ -253,13 +257,13 @@ onMounted(async () => {
   font-weight: 500;
 }
 
+.tag .label {
+  font-size: 13px;
+}
+
 .tag.category {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
   color: var(--primary-color);
-}
-
-.tag .icon {
-  font-size: 14px;
 }
 
 .detail-content {
@@ -275,16 +279,9 @@ onMounted(async () => {
 }
 
 .section-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
   margin-bottom: 16px;
   padding-bottom: 12px;
   border-bottom: 2px solid var(--bg-tertiary);
-}
-
-.section-icon {
-  font-size: 22px;
 }
 
 .section-header h3 {
@@ -307,12 +304,6 @@ onMounted(async () => {
   background: var(--bg-primary);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-md);
-}
-
-.empty-icon {
-  font-size: 80px;
-  margin-bottom: 20px;
-  opacity: 0.6;
 }
 
 .empty h3 {

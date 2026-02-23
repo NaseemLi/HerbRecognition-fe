@@ -1,13 +1,18 @@
 <template>
   <div class="herbs-page">
     <div class="page-header">
-      <h1>🌱 药材查询</h1>
+      <h1>药材查询</h1>
       <p>探索中草药的奥秘</p>
     </div>
     
     <div class="search-bar">
       <div class="search-input-wrapper">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="9" cy="9" r="6" stroke="#9ca3af" stroke-width="2"/>
+            <path d="M13 13L17 17" stroke="#9ca3af" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </span>
         <input 
           v-model="keyword"
           type="text" 
@@ -15,9 +20,7 @@
           @keyup.enter="handleSearch"
         />
       </div>
-      <button @click="handleSearch" class="btn-search">
-        <span class="icon">🔍</span> 搜索
-      </button>
+      <button @click="handleSearch" class="btn-search">搜索</button>
     </div>
 
     <div v-if="loading" class="loading">
@@ -26,7 +29,13 @@
     </div>
     
     <div v-else-if="list.length === 0" class="empty">
-      <div class="empty-icon">{{ hasSearched ? '🔍' : '📭' }}</div>
+      <div class="empty-icon">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="80" height="80" rx="40" fill="#f3f4f6"/>
+          <circle cx="40" cy="32" r="6" stroke="#9ca3af" stroke-width="2.5"/>
+          <path d="M35 37L45 47" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
       <h3>{{ hasSearched ? '未找到相关药材' : '暂无数据' }}</h3>
       <p v-if="hasSearched">试试其他关键词吧</p>
     </div>
@@ -39,21 +48,21 @@
         </div>
         <div class="item-info">
           <h3>{{ item.name }}</h3>
-          <p v-if="item.scientific" class="scientific">🏷️ {{ item.scientific }}</p>
+          <p v-if="item.scientific" class="scientific">{{ item.scientific }}</p>
           <p class="description">{{ item.description || '暂无描述' }}</p>
         </div>
-        <div class="item-arrow">›</div>
+        <div class="item-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 6L15 12L9 18" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
       </div>
     </div>
 
     <div v-if="!loading && list.length > 0" class="pagination">
-      <button :disabled="page <= 1" @click="loadPage(page - 1)">
-        <span class="icon">⬅️</span> 上一页
-      </button>
+      <button :disabled="page <= 1" @click="loadPage(page - 1)">上一页</button>
       <span class="page-info">第 {{ page }} 页 / 共 {{ totalPages }} 页</span>
-      <button :disabled="page >= totalPages" @click="loadPage(page + 1)">
-        下一页 <span class="icon">➡️</span>
-      </button>
+      <button :disabled="page >= totalPages" @click="loadPage(page + 1)">下一页</button>
     </div>
   </div>
 </template>
@@ -178,7 +187,8 @@ onMounted(() => {
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 18px;
+  display: flex;
+  align-items: center;
 }
 
 .search-input-wrapper input {
@@ -198,9 +208,6 @@ onMounted(() => {
 }
 
 .btn-search {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   padding: 14px 28px;
   background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
   color: #fff;
@@ -250,9 +257,7 @@ onMounted(() => {
 }
 
 .empty-icon {
-  font-size: 80px;
   margin-bottom: 20px;
-  opacity: 0.6;
 }
 
 .empty h3 {
@@ -344,14 +349,12 @@ onMounted(() => {
 }
 
 .item-arrow {
-  font-size: 32px;
-  color: var(--text-light);
   flex-shrink: 0;
   transition: all 0.3s;
 }
 
-.item:hover .item-arrow {
-  color: var(--primary-color);
+.item:hover .item-arrow svg {
+  stroke: var(--primary-color);
   transform: translateX(4px);
 }
 
@@ -368,9 +371,6 @@ onMounted(() => {
 }
 
 .pagination button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   padding: 10px 24px;
   background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
   color: #fff;

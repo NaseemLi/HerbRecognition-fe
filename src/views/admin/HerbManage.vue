@@ -3,11 +3,9 @@
     <template #title>药材管理</template>
     
     <div class="toolbar">
-      <button @click="handleCreate" class="btn-primary">
-        <span class="icon">➕</span> 新增药材
-      </button>
+      <button @click="handleCreate" class="btn-primary">新增药材</button>
       <button @click="handleBatchDelete" :disabled="selectedIds.length === 0" class="btn-danger">
-        <span class="icon">🗑️</span> 批量删除 ({{ selectedIds.length }})
+        批量删除 ({{ selectedIds.length }})
       </button>
     </div>
 
@@ -28,38 +26,27 @@
             <td><input type="checkbox" :value="item.id" v-model="selectedIds" /></td>
             <td class="text-muted">#{{ item.id }}</td>
             <td>
-              <div class="name-cell">
-                <span class="name">{{ item.name }}</span>
-              </div>
+              <span class="name">{{ item.name }}</span>
             </td>
             <td class="text-muted">{{ item.scientific || '-' }}</td>
             <td><span v-if="item.category" class="badge">{{ item.category }}</span><span v-else class="text-muted">-</span></td>
             <td>
-              <button @click="handleEdit(item)" class="btn-icon btn-edit" title="编辑">
-                <span class="icon">✏️</span>
-              </button>
-              <button @click="handleDelete(item.id)" class="btn-icon btn-delete" title="删除">
-                <span class="icon">🗑️</span>
-              </button>
+              <button @click="handleEdit(item)" class="btn-icon btn-edit" title="编辑">编辑</button>
+              <button @click="handleDelete(item.id)" class="btn-icon btn-delete" title="删除">删除</button>
             </td>
           </tr>
         </tbody>
       </table>
       
       <div v-if="!loading && list.length === 0" class="empty-table">
-        <span class="empty-icon">📭</span>
         <p>暂无数据</p>
       </div>
     </div>
 
     <div v-if="!loading && list.length > 0" class="pagination">
-      <button :disabled="page <= 1" @click="loadPage(page - 1)">
-        <span class="icon">⬅️</span> 上一页
-      </button>
+      <button :disabled="page <= 1" @click="loadPage(page - 1)">上一页</button>
       <span class="page-info">第 {{ page }} 页 / 共 {{ totalPages }} 页</span>
-      <button :disabled="page >= totalPages" @click="loadPage(page + 1)">
-        下一页 <span class="icon">➡️</span>
-      </button>
+      <button :disabled="page >= totalPages" @click="loadPage(page + 1)">下一页</button>
     </div>
 
     <!-- 编辑/新增 弹窗 -->
@@ -270,9 +257,6 @@ onMounted(() => {
 }
 
 .btn-primary {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   padding: 12px 24px;
   background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
   color: #fff;
@@ -296,9 +280,6 @@ onMounted(() => {
 }
 
 .btn-danger {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   padding: 12px 24px;
   background: linear-gradient(135deg, var(--danger-color), #dc2626);
   color: #fff;
@@ -361,7 +342,7 @@ onMounted(() => {
   color: var(--text-light);
 }
 
-.name-cell .name {
+.name {
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -377,44 +358,36 @@ onMounted(() => {
 }
 
 .btn-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
+  display: inline-block;
+  padding: 6px 12px;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
   cursor: pointer;
   transition: all 0.2s;
-  font-size: 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-right: 8px;
 }
 
 .btn-icon:hover {
-  transform: scale(1.1);
+  background: var(--bg-primary);
 }
 
 .btn-edit:hover {
-  background: rgba(16, 185, 129, 0.1);
   border-color: var(--primary-color);
+  color: var(--primary-color);
 }
 
 .btn-delete:hover {
-  background: #fef2f2;
   border-color: var(--danger-color);
+  color: var(--danger-color);
 }
 
 .empty-table {
   text-align: center;
   padding: 60px 20px;
   color: var(--text-secondary);
-}
-
-.empty-icon {
-  font-size: 64px;
-  display: block;
-  margin-bottom: 12px;
-  opacity: 0.5;
 }
 
 .pagination {
@@ -430,9 +403,6 @@ onMounted(() => {
 }
 
 .pagination button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   padding: 10px 24px;
   background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
   color: #fff;

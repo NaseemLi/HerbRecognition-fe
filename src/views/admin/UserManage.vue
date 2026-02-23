@@ -23,33 +23,26 @@
             </td>
             <td>
               <select :value="item.role" @change="handleRoleChange(item.id, $event)" class="role-select">
-                <option value="user">👤 普通用户</option>
-                <option value="admin">👑 管理员</option>
+                <option value="user">普通用户</option>
+                <option value="admin">管理员</option>
               </select>
             </td>
             <td>
-              <button @click="handleResetPassword(item)" class="btn-text">
-                <span class="icon">🔑</span> 重置密码
-              </button>
+              <button @click="handleResetPassword(item)" class="btn-text">重置密码</button>
             </td>
           </tr>
         </tbody>
       </table>
       
       <div v-if="!loading && list.length === 0" class="empty-table">
-        <span class="empty-icon">📭</span>
         <p>暂无用户数据</p>
       </div>
     </div>
 
     <div v-if="!loading && list.length > 0" class="pagination">
-      <button :disabled="page <= 1" @click="loadPage(page - 1)">
-        <span class="icon">⬅️</span> 上一页
-      </button>
+      <button :disabled="page <= 1" @click="loadPage(page - 1)">上一页</button>
       <span class="page-info">第 {{ page }} 页 / 共 {{ totalPages }} 页</span>
-      <button :disabled="page >= totalPages" @click="loadPage(page + 1)">
-        下一页 <span class="icon">➡️</span>
-      </button>
+      <button :disabled="page >= totalPages" @click="loadPage(page + 1)">下一页</button>
     </div>
   </AdminLayout>
 </template>
@@ -84,17 +77,12 @@ async function loadPage(newPage: number) {
 
 async function handleRoleChange(userId: number, event: Event) {
   const role = (event.target as HTMLSelectElement).value
-  const oldValue = (event.target as HTMLSelectElement).dataset.oldValue
   try {
     await updateUserRole(userId, role)
-    // Show success with toast or notification (simplified here)
   } catch (e: any) {
     alert(e.response?.data?.message || '修改失败')
-    // Revert the select value
     const select = event.target as HTMLSelectElement
-    if (oldValue) {
-      select.value = oldValue
-    }
+    select.value = list.value.find(u => u.id === userId)?.role || 'user'
   }
 }
 
@@ -185,9 +173,6 @@ onMounted(() => {
 }
 
 .btn-text {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
   padding: 8px 16px;
   background: transparent;
   border: 1px solid var(--border-color);
@@ -210,13 +195,6 @@ onMounted(() => {
   color: var(--text-secondary);
 }
 
-.empty-icon {
-  font-size: 64px;
-  display: block;
-  margin-bottom: 12px;
-  opacity: 0.5;
-}
-
 .pagination {
   display: flex;
   justify-content: center;
@@ -230,9 +208,6 @@ onMounted(() => {
 }
 
 .pagination button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   padding: 10px 24px;
   background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
   color: #fff;

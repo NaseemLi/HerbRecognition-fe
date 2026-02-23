@@ -1,24 +1,12 @@
 <template>
   <div class="admin-layout">
     <aside class="sidebar">
-      <div class="logo">
-        <span class="logo-icon">⚙️</span>
-        <span>管理后台</span>
-      </div>
+      <div class="logo">管理后台</div>
       <nav class="menu">
-        <router-link to="/admin/herbs" class="menu-item">
-          <span class="menu-icon">🌿</span>
-          药材管理
-        </router-link>
-        <router-link to="/admin/users" class="menu-item">
-          <span class="menu-icon">👥</span>
-          用户管理
-        </router-link>
+        <router-link to="/admin/herbs" class="menu-item">药材管理</router-link>
+        <router-link to="/admin/users" class="menu-item">用户管理</router-link>
         <div class="menu-divider"></div>
-        <router-link to="/" class="menu-item">
-          <span class="menu-icon">🏠</span>
-          返回前台
-        </router-link>
+        <router-link to="/" class="menu-item">返回前台</router-link>
       </nav>
     </aside>
     <main class="content">
@@ -32,9 +20,7 @@
             <span class="username">{{ userStore.user?.username }}</span>
             <span class="role-badge" v-if="userStore.user?.role === 'admin'">管理员</span>
           </div>
-          <button @click="handleLogout" class="btn-logout" title="退出登录">
-            <span class="icon">🚪</span>
-          </button>
+          <button @click="handleLogout" class="btn-logout" title="退出登录">退出</button>
         </div>
       </header>
       <div class="page-content">
@@ -74,17 +60,10 @@ function handleLogout() {
 }
 
 .logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
   padding: 24px 20px;
   font-size: 18px;
   font-weight: 700;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.logo-icon {
-  font-size: 24px;
 }
 
 .menu {
@@ -95,7 +74,6 @@ function handleLogout() {
 .menu-item {
   display: flex;
   align-items: center;
-  gap: 12px;
   padding: 14px 20px;
   color: rgba(255, 255, 255, 0.6);
   text-decoration: none;
@@ -113,10 +91,6 @@ function handleLogout() {
   background: rgba(16, 185, 129, 0.15);
   color: #fff;
   border-left-color: var(--primary-color);
-}
-
-.menu-icon {
-  font-size: 20px;
 }
 
 .menu-divider {
@@ -186,18 +160,20 @@ function handleLogout() {
 }
 
 .btn-logout {
-  padding: 8px;
+  padding: 8px 16px;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
   cursor: pointer;
-  font-size: 18px;
+  font-size: 14px;
+  color: var(--text-secondary);
   transition: all 0.2s;
 }
 
 .btn-logout:hover {
   background: #fef2f2;
   border-color: var(--danger-color);
+  color: var(--danger-color);
 }
 
 .page-content {

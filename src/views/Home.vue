@@ -2,64 +2,74 @@
   <div class="home">
     <header class="header">
       <div class="header-left">
-        <span class="logo">🌿</span>
+        <div class="logo">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="16" r="16" fill="#10b981"/>
+            <path d="M16 8C16 8 12 12 12 16C12 20 16 24 16 24C16 24 20 20 20 16C20 12 16 8 16 8Z" fill="white" opacity="0.3"/>
+          </svg>
+        </div>
         <h1>中草药识别系统</h1>
       </div>
       <nav class="nav">
-        <router-link to="/recognize" class="nav-item">
-          <span class="icon">📷</span>
-          识别
-        </router-link>
-        <router-link to="/herbs" class="nav-item">
-          <span class="icon">🌱</span>
-          药材查询
-        </router-link>
-        <router-link to="/history" class="nav-item">
-          <span class="icon">📜</span>
-          历史记录
-        </router-link>
-        <router-link v-if="userStore.user?.role === 'admin'" to="/admin/herbs" class="nav-item admin">
-          <span class="icon">⚙️</span>
-          管理后台
-        </router-link>
+        <router-link to="/recognize" class="nav-item">识别</router-link>
+        <router-link to="/herbs" class="nav-item">药材查询</router-link>
+        <router-link to="/history" class="nav-item">历史记录</router-link>
+        <router-link v-if="userStore.user?.role === 'admin'" to="/admin/herbs" class="nav-item admin">管理后台</router-link>
       </nav>
       <div class="user-info">
         <div class="avatar">{{ userStore.user?.username.charAt(0).toUpperCase() }}</div>
         <span class="username">{{ userStore.user?.username }}</span>
-        <button @click="handleLogout" class="btn-logout" title="退出登录">
-          <span>🚪</span>
-        </button>
+        <button @click="handleLogout" class="btn-logout" title="退出登录">退出</button>
       </div>
     </header>
     
     <main class="main">
       <div class="welcome-card">
-        <div class="welcome-icon">🌿</div>
+        <div class="welcome-icon">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="40" r="40" fill="#10b981" opacity="0.1"/>
+            <circle cx="40" cy="40" r="24" fill="#10b981" opacity="0.2"/>
+            <circle cx="40" cy="40" r="12" fill="#10b981"/>
+          </svg>
+        </div>
         <h2>欢迎使用中草药识别系统</h2>
         <p>智能识别中草药，传承千年中医文化</p>
         
         <div class="features">
           <div class="feature-card">
-            <div class="feature-icon">📷</div>
+            <div class="feature-icon">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="48" height="48" rx="12" fill="#10b981" opacity="0.1"/>
+                <rect x="14" y="14" width="20" height="20" rx="4" stroke="#10b981" stroke-width="2"/>
+                <circle cx="24" cy="24" r="4" fill="#10b981"/>
+              </svg>
+            </div>
             <h3>拍照识别</h3>
             <p>上传药材照片，AI 智能识别</p>
           </div>
           <div class="feature-card">
-            <div class="feature-icon">📖</div>
+            <div class="feature-icon">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="48" height="48" rx="12" fill="#06b6d4" opacity="0.1"/>
+                <path d="M16 18H32M16 24H32M16 30H26" stroke="#06b6d4" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
             <h3>药材百科</h3>
             <p>详细了解每种药材的功效</p>
           </div>
           <div class="feature-card">
-            <div class="feature-icon">📝</div>
+            <div class="feature-icon">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="48" height="48" rx="12" fill="#f59e0b" opacity="0.1"/>
+                <path d="M18 16H30M18 24H30M18 32H26" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
             <h3>历史记录</h3>
             <p>随时查看识别历史</p>
           </div>
         </div>
         
-        <router-link to="/recognize" class="btn-start">
-          <span class="icon">🚀</span>
-          开始识别
-        </router-link>
+        <router-link to="/recognize" class="btn-start">开始识别</router-link>
       </div>
     </main>
   </div>
@@ -104,7 +114,8 @@ function handleLogout() {
 }
 
 .logo {
-  font-size: 32px;
+  display: flex;
+  align-items: center;
 }
 
 .header h1 {
@@ -120,9 +131,6 @@ function handleLogout() {
 }
 
 .nav-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
   padding: 10px 18px;
   color: var(--text-secondary);
   border-radius: var(--radius);
@@ -146,10 +154,6 @@ function handleLogout() {
 
 .nav-item.admin.router-link-active {
   background: rgba(245, 158, 11, 0.1);
-}
-
-.nav-item .icon {
-  font-size: 18px;
 }
 
 .user-info {
@@ -177,17 +181,20 @@ function handleLogout() {
 }
 
 .btn-logout {
-  padding: 8px;
-  background: transparent;
-  border: none;
+  padding: 8px 16px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius);
   cursor: pointer;
-  font-size: 18px;
+  font-size: 14px;
+  color: var(--text-secondary);
   transition: all 0.2s;
 }
 
 .btn-logout:hover {
-  background: var(--bg-tertiary);
+  background: #fef2f2;
+  border-color: var(--danger-color);
+  color: var(--danger-color);
 }
 
 .main {
@@ -207,7 +214,6 @@ function handleLogout() {
 }
 
 .welcome-icon {
-  font-size: 80px;
   margin-bottom: 24px;
 }
 
@@ -244,7 +250,6 @@ function handleLogout() {
 }
 
 .feature-icon {
-  font-size: 48px;
   margin-bottom: 16px;
 }
 
@@ -263,7 +268,6 @@ function handleLogout() {
 .btn-start {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
   padding: 16px 40px;
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
   color: #fff;
@@ -277,10 +281,6 @@ function handleLogout() {
 .btn-start:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
-}
-
-.btn-start .icon {
-  font-size: 22px;
 }
 
 @media (max-width: 768px) {

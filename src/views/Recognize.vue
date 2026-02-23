@@ -1,7 +1,7 @@
 <template>
   <div class="recognize-page">
     <div class="page-header">
-      <h1>📷 药材识别</h1>
+      <h1>药材识别</h1>
       <p>上传图片，AI 智能识别中草药</p>
     </div>
 
@@ -17,7 +17,13 @@
           />
           
           <div v-if="!previewUrl" class="upload-placeholder" @click="triggerUpload">
-            <div class="upload-icon">📷</div>
+            <div class="upload-icon">
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="64" height="64" rx="16" fill="#10b981" opacity="0.1"/>
+                <circle cx="32" cy="26" r="8" stroke="#10b981" stroke-width="2.5"/>
+                <path d="M22 44L28 36L34 40L40 34L46 44" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
             <h3>点击或拖拽上传图片</h3>
             <p class="hint">支持 JPG, PNG, GIF, WEBP 格式，最大 5MB</p>
           </div>
@@ -25,11 +31,8 @@
           <div v-else class="preview-container">
             <img :src="previewUrl" alt="预览" class="preview-image" />
             <div class="preview-actions">
-              <button @click="triggerUpload" class="btn-secondary">
-                <span class="icon">🔄</span> 重新选择
-              </button>
+              <button @click="triggerUpload" class="btn-secondary">重新选择</button>
               <button @click="handleRecognize" :disabled="recognizing" class="btn-primary">
-                <span class="icon">{{ recognizing ? '⏳' : '🔍' }}</span>
                 {{ recognizing ? '识别中...' : '开始识别' }}
               </button>
             </div>
@@ -39,7 +42,7 @@
 
       <div v-if="result" class="result-section">
         <div class="result-header">
-          <h2>✅ 识别结果</h2>
+          <h2>识别结果</h2>
           <span class="confidence-badge">{{ result.confidence }}% 置信度</span>
         </div>
         
@@ -50,17 +53,12 @@
           <div class="result-info">
             <h3>{{ result.herb_name }}</h3>
             <p class="confidence">置信度：<strong>{{ result.confidence }}%</strong></p>
-            <router-link :to="`/herb/${result.herb_id}`" class="btn-detail">
-              <span class="icon">📖</span> 查看详情
-            </router-link>
+            <router-link :to="`/herb/${result.herb_id}`" class="btn-detail">查看详情</router-link>
           </div>
         </div>
       </div>
 
-      <div v-if="error" class="error-message">
-        <span class="icon">⚠️</span>
-        {{ error }}
-      </div>
+      <div v-if="error" class="error-message">{{ error }}</div>
     </div>
   </div>
 </template>
@@ -187,9 +185,7 @@ async function handleRecognize() {
 }
 
 .upload-icon {
-  font-size: 72px;
   margin-bottom: 20px;
-  opacity: 0.8;
 }
 
 .upload-placeholder h3 {
@@ -225,9 +221,6 @@ async function handleRecognize() {
 }
 
 .btn-secondary {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   padding: 12px 28px;
   background: var(--bg-primary);
   border: 2px solid var(--border-color);
@@ -244,9 +237,6 @@ async function handleRecognize() {
 }
 
 .btn-primary {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   padding: 12px 32px;
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
   color: #fff;
@@ -361,7 +351,6 @@ async function handleRecognize() {
 .btn-detail {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
   padding: 12px 28px;
   background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
   color: #fff;
@@ -380,19 +369,13 @@ async function handleRecognize() {
 }
 
 .error-message {
-  display: flex;
-  align-items: center;
-  gap: 12px;
   padding: 16px 24px;
   background: #fef2f2;
   color: var(--danger-color);
   border-radius: var(--radius);
   font-size: 15px;
   border: 1px solid #fecaca;
-}
-
-.error-message .icon {
-  font-size: 20px;
+  text-align: center;
 }
 
 @media (max-width: 768px) {
