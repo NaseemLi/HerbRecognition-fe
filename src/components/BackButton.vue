@@ -35,13 +35,7 @@ const title = computed(() => {
 })
 
 function handleBack() {
-  // 如果有历史记录，返回上一页
-  if (window.history.length > 1) {
-    router.back()
-  } else {
-    // 否则跳转到默认路径
-    router.push(props.defaultBack)
-  }
+  router.push(props.defaultBack)
 }
 </script>
 
