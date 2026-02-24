@@ -3,22 +3,18 @@
     <div class="register-card">
       <div class="register-header">
         <div class="logo-icon">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="32" cy="32" r="32" fill="#10b981"/>
-            <path d="M32 16C32 16 24 24 24 32C24 40 32 48 32 48C32 48 40 40 40 32C40 24 32 16 32 16Z" fill="white" opacity="0.3"/>
-            <path d="M32 20C32 20 28 28 28 32C28 36 32 44 32 44C32 44 36 36 36 32C36 28 32 20 32 20Z" fill="white" opacity="0.5"/>
-          </svg>
+          <img src="@public/logo.png" alt="Logo" />
         </div>
         <h1>创建账号</h1>
-        <p class="subtitle">加入我们，开始识别中草药</p>
+        <p class="subtitle">智能识别，传承中医文化</p>
       </div>
-      
+
       <form @submit.prevent="handleRegister">
         <div class="form-item">
           <label>用户名</label>
-          <input 
-            v-model="form.username" 
-            type="text" 
+          <input
+            v-model="form.username"
+            type="text"
             placeholder="3-32 个字符"
             required
             minlength="3"
@@ -27,9 +23,9 @@
         </div>
         <div class="form-item">
           <label>密码</label>
-          <input 
-            v-model="form.password" 
-            type="password" 
+          <input
+            v-model="form.password"
+            type="password"
             placeholder="至少 6 个字符"
             required
             minlength="6"
@@ -37,9 +33,9 @@
         </div>
         <div class="form-item">
           <label>确认密码</label>
-          <input 
-            v-model="form.confirmPassword" 
-            type="password" 
+          <input
+            v-model="form.confirmPassword"
+            type="password"
             placeholder="请再次输入密码"
             required
           />
@@ -47,12 +43,12 @@
         <button type="submit" :disabled="loading" class="btn-primary">
           {{ loading ? '注册中...' : '注册' }}
         </button>
+
+        <p v-show="error" class="error">{{ error }}</p>
       </form>
-      
-      <p v-if="error" class="error">{{ error }}</p>
-      
-      <p v-if="success" class="success">注册成功，即将跳转登录</p>
-      
+
+      <p v-show="success" class="success">注册成功，即将跳转登录</p>
+
       <div class="links">
         <span>已有账号？</span>
         <router-link to="/login">立即登录</router-link>
@@ -133,6 +129,12 @@ async function handleRegister() {
   margin-bottom: 20px;
 }
 
+.logo-icon img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
 .register-header h1 {
   font-size: 26px;
   font-weight: 700;
@@ -208,14 +210,21 @@ async function handleRegister() {
 }
 
 .error {
-  padding: 12px;
+  padding: 12px 16px;
   background: #fef2f2;
   color: var(--danger-color);
   border-radius: var(--radius);
   font-size: 14px;
-  margin-top: 20px;
+  margin-top: 16px;
   border: 1px solid #fecaca;
   text-align: center;
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
 }
 
 .success {

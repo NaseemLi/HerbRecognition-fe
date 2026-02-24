@@ -31,9 +31,9 @@
         <button type="submit" :disabled="loading" class="btn-primary">
           {{ loading ? '登录中...' : '登录' }}
         </button>
+        
+        <p v-show="error" class="error">{{ error }}</p>
       </form>
-      
-      <p v-if="error" class="error">{{ error }}</p>
       
       <div class="links">
         <span>还没有账号？</span>
@@ -186,14 +186,21 @@ async function handleLogin() {
 }
 
 .error {
-  padding: 12px;
+  padding: 12px 16px;
   background: #fef2f2;
   color: var(--danger-color);
   border-radius: var(--radius);
   font-size: 14px;
-  margin-top: 20px;
+  margin-top: 16px;
   border: 1px solid #fecaca;
   text-align: center;
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
 }
 
 .links {
