@@ -16,4 +16,4 @@ services:
 
 networks:
   herb-network:
-    driver: bridge
+    external: true
