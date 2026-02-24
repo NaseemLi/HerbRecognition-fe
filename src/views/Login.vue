@@ -3,11 +3,7 @@
     <div class="login-card">
       <div class="login-header">
         <div class="logo-icon">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="32" cy="32" r="32" fill="#10b981"/>
-            <path d="M32 16C32 16 24 24 24 32C24 40 32 48 32 48C32 48 40 40 40 32C40 24 32 16 32 16Z" fill="white" opacity="0.3"/>
-            <path d="M32 20C32 20 28 28 28 32C28 36 32 44 32 44C32 44 36 36 36 32C36 28 32 20 32 20Z" fill="white" opacity="0.5"/>
-          </svg>
+          <img src="@public/logo.png" alt="Logo" />
         </div>
         <h1>中草药识别系统</h1>
         <p class="subtitle">智能识别，传承中医文化</p>
@@ -107,6 +103,12 @@ async function handleLogin() {
 
 .logo-icon {
   margin-bottom: 20px;
+}
+
+.logo-icon img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
 }
 
 .login-header h1 {

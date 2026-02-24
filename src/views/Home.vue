@@ -7,12 +7,11 @@
         </div>
         <h1>中草药识别系统</h1>
       </div>
-      <nav class="nav">
-        <router-link v-if="userStore.user?.role === 'admin'" to="/admin/herbs" class="nav-item admin">管理后台</router-link>
-      </nav>
       <div class="user-info">
-        <div class="avatar">{{ userStore.user?.username.charAt(0).toUpperCase() }}</div>
+        <img v-if="userStore.user?.avatar" :src="userStore.user.avatar" alt="头像" class="avatar" />
+        <div v-else class="avatar">{{ userStore.user?.username.charAt(0).toUpperCase() }}</div>
         <span class="username">{{ userStore.user?.username }}</span>
+        <router-link v-if="userStore.user?.role === 'admin'" to="/admin/herbs" class="btn-profile">管理后台</router-link>
         <router-link to="/profile" class="btn-profile">个人中心</router-link>
         <button @click="handleLogout" class="btn-logout" title="退出登录">退出</button>
       </div>
@@ -25,8 +24,8 @@
             <h2>中草药识别系统</h2>
             <p>基于人工智能的中草药识别平台，帮助您快速准确地识别各类中草药</p>
             <div class="hero-actions">
-              <router-link to="/recognize" class="btn-primary">开始识别</router-link>
-              <router-link to="/herbs" class="btn-secondary">浏览药材</router-link>
+              <router-link to="/recognize" class="btn-primary">拍照识别</router-link>
+              <router-link to="/herbs" class="btn-secondary">药材百科</router-link>
               <router-link to="/history" class="btn-secondary">历史记录</router-link>
             </div>
           </div>
@@ -108,10 +107,10 @@ const currentSlide = ref(0)
 let timer: number | null = null
 
 const slides = ref([
-  { name: '人参', category: '补气药', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Ginsengpflanze.jpg/500px-Ginsengpflanze.jpg' },
-  { name: '枸杞', category: '补阴药', image: 'https://i.111666.best/image/UGDeo3OceH8Heq0ypyusGR.jpg' },
-  { name: '当归', category: '补血药', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Chinatown_Museum_Collections_in_Binondo_34.jpg/500px-Chinatown_Museum_Collections_in_Binondo_34.jpg' },
-  { name: '黄芪', category: '补气药', image: 'https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?w=600&h=400&fit=crop' },
+  { name: '人参', category: '补气药', image: 'https://picui.ogmua.cn/s1/2026/02/24/699d646131f65.webp' },
+  { name: '枸杞', category: '补阴药', image: 'https://picui.ogmua.cn/s1/2026/02/24/699d64b1f3ca2.webp' },
+  { name: '当归', category: '补血药', image: 'https://picui.ogmua.cn/s1/2026/02/24/699d65aa842dd.webp' },
+  { name: '黄芪', category: '补气药', image: 'https://picui.ogmua.cn/s1/2026/02/24/699d65e6db1b5.webp' },
 ])
 
 function nextSlide() {
@@ -234,6 +233,7 @@ function handleLogout() {
   justify-content: center;
   font-weight: 600;
   font-size: 16px;
+  object-fit: cover;
 }
 
 .username {

@@ -24,12 +24,47 @@
           
           <div class="profile-card">
             <div class="user-section">
-              <div class="avatar-large">{{ userStore.user?.username.charAt(0).toUpperCase() }}</div>
+              <div class="avatar-wrapper">
+                <img v-if="userStore.user?.avatar" :src="userStore.user.avatar" alt="头像" class="avatar-large" @click="triggerAvatarUpload" />
+                <div v-else class="avatar-large" @click="triggerAvatarUpload">{{ userStore.user?.username.charAt(0).toUpperCase() }}</div>
+                <button type="button" class="avatar-upload-btn" @click="triggerAvatarUpload" title="更换头像">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 16V8M12 8L9 11M12 8L15 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+              <input
+                ref="fileInput"
+                type="file"
+                accept="image/*"
+                @change="handleAvatarChange"
+                style="display: none"
+              />
               <div class="user-details">
                 <h3>{{ userStore.user?.username }}</h3>
                 <span class="role-badge" :class="userStore.user?.role">{{ userStore.user?.role === 'admin' ? '管理员' : '普通用户' }}</span>
               </div>
             </div>
+
+            <form @submit.prevent="handleUpdateProfile" class="profile-form">
+              <h4>修改资料</h4>
+              
+              <div class="form-group">
+                <label for="username">用户名</label>
+                <input
+                  id="username"
+                  v-model="profileForm.username"
+                  type="text"
+                  placeholder="请输入用户名"
+                  minlength="3"
+                  maxlength="32"
+                />
+              </div>
+
+              <button type="submit" class="btn-submit" :disabled="loading">
+                {{ loading ? '保存中...' : '保存修改' }}
+              </button>
+            </form>
 
             <form @submit.prevent="handleChangePassword" class="password-form">
               <h4>修改密码</h4>
@@ -85,10 +120,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { changePassword } from '@/api/auth'
+import { getUserProfile, updateUserProfile, uploadAvatar } from '@/api/user'
 import BackButton from '@/components/BackButton.vue'
 
 const router = useRouter()
@@ -103,6 +139,95 @@ const form = reactive({
   new_password: '',
   confirm_password: ''
 })
+
+const profileForm = reactive({
+  username: ''
+})
+
+const fileInput = ref<HTMLInputElement | null>(null)
+
+function triggerAvatarUpload() {
+  fileInput.value?.click()
+}
+
+onMounted(() => {
+  if (userStore.user) {
+    profileForm.username = userStore.user.username
+  }
+})
+
+async function handleUpdateProfile() {
+  errorMessage.value = ''
+  successMessage.value = ''
+  loading.value = true
+
+  try {
+    const updateData: { username?: string } = {}
+    if (profileForm.username !== userStore.user?.username) {
+      updateData.username = profileForm.username
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      errorMessage.value = '未检测到任何修改'
+      loading.value = false
+      return
+    }
+
+    const res = await updateUserProfile(updateData)
+    userStore.setAuth(userStore.token, res.data.user)
+    successMessage.value = '资料更新成功'
+    profileForm.username = res.data.user.username
+    
+    setTimeout(() => {
+      successMessage.value = ''
+    }, 3000)
+  } catch (error: any) {
+    errorMessage.value = error.response?.data?.message || '资料更新失败'
+  } finally {
+    loading.value = false
+  }
+}
+
+async function handleAvatarChange(event: Event) {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (!file) return
+
+  const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+  if (!validTypes.includes(file.type)) {
+    errorMessage.value = '仅支持 JPG, PNG, GIF, WEBP 格式的图片'
+    return
+  }
+
+  if (file.size > 2 * 1024 * 1024) {
+    errorMessage.value = '图片大小不能超过 2MB'
+    return
+  }
+
+  errorMessage.value = ''
+  loading.value = true
+
+  const formData = new FormData()
+  formData.append('avatar', file)
+
+  try {
+    const res = await uploadAvatar(formData)
+    const newUserData = { ...userStore.user!, avatar: res.data.avatar_url }
+    userStore.setAuth(userStore.token, newUserData)
+    successMessage.value = '头像上传成功'
+    
+    setTimeout(() => {
+      successMessage.value = ''
+    }, 3000)
+  } catch (error: any) {
+    errorMessage.value = error.response?.data?.message || '头像上传失败'
+  } finally {
+    loading.value = false
+    if (fileInput.value) {
+      fileInput.value.value = ''
+    }
+  }
+}
 
 async function handleChangePassword() {
   errorMessage.value = ''
@@ -243,9 +368,14 @@ async function handleChangePassword() {
   margin-bottom: 24px;
 }
 
+.avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
 .avatar-large {
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   color: #fff;
   border-radius: 50%;
@@ -253,8 +383,31 @@ async function handleChangePassword() {
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 28px;
-  flex-shrink: 0;
+  font-size: 32px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.avatar-upload-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  background: var(--primary-color);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid #fff;
+}
+
+.avatar-upload-btn:hover {
+  background: var(--primary-hover);
+  transform: scale(1.1);
 }
 
 .user-details h3 {
@@ -284,11 +437,18 @@ async function handleChangePassword() {
   color: var(--primary-color);
 }
 
+.profile-form h4,
 .password-form h4 {
   font-size: 18px;
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 20px;
+}
+
+.profile-form {
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .form-group {

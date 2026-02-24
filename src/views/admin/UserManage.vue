@@ -15,7 +15,8 @@
           <router-link to="/admin/users" class="admin-tab">用户管理</router-link>
         </div>
         <div class="user-info">
-          <div class="avatar">{{ userStore.user?.username.charAt(0).toUpperCase() }}</div>
+          <img v-if="userStore.user?.avatar" :src="userStore.user.avatar" alt="头像" class="avatar" />
+          <div v-else class="avatar">{{ userStore.user?.username.charAt(0).toUpperCase() }}</div>
           <span class="username">{{ userStore.user?.username }}</span>
           <span class="role-badge" v-if="userStore.user?.role === 'admin'">管理员</span>
         </div>
@@ -36,10 +37,11 @@
         <tbody>
           <tr v-for="item in list" :key="item.id">
             <td>
-              <div class="user-avatar-small">{{ item.username.charAt(0).toUpperCase() }}</div>
-            </td>
-            <td>
-              <span class="user-name">{{ item.username }}</span>
+              <div class="user-cell">
+                <img v-if="item.avatar" :src="item.avatar" alt="头像" class="user-avatar" />
+                <div v-else class="user-avatar">{{ item.username.charAt(0).toUpperCase() }}</div>
+                <span class="user-name">{{ item.username }}</span>
+              </div>
             </td>
             <td>
               <select :value="item.role" @change="handleRoleChange(item.id, $event)" class="role-select">
@@ -210,6 +212,7 @@ onMounted(() => {
   justify-content: center;
   font-weight: 600;
   font-size: 16px;
+  object-fit: cover;
 }
 
 .username {
@@ -275,29 +278,7 @@ onMounted(() => {
 }
 
 .table .image-col {
-  width: 80px;
-}
-
-.user-avatar-small {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  color: #fff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 16px;
-}
-
-.user-name {
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.text-muted {
-  color: var(--text-light);
+  width: 200px;
 }
 
 .user-cell {
@@ -317,6 +298,8 @@ onMounted(() => {
   justify-content: center;
   font-weight: 600;
   font-size: 16px;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .user-name {
