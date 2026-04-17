@@ -221,7 +221,7 @@ function handleEdit(item: Herb) {
     effects: item.effects || '',
     usage: item.usage || '',
   }
-  previewImage.value = item.image_url ? `http://localhost:8080${item.image_url}` : ''
+  previewImage.value = item.image_url ? `${API_BASE_URL || ''}${item.image_url}` : ''
   selectedImage.value = null
   showModal.value = true
 }
