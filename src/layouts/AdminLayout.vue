@@ -16,7 +16,8 @@
         </div>
         <div class="header-right">
           <div class="user-info">
-            <div class="avatar">{{ userStore.user?.username.charAt(0).toUpperCase() }}</div>
+            <img v-if="userStore.user?.avatar" :src="userStore.user.avatar" alt="头像" class="avatar" />
+            <div v-else class="avatar">{{ userStore.user?.username.charAt(0).toUpperCase() }}</div>
             <span class="username">{{ userStore.user?.username }}</span>
             <span class="role-badge" v-if="userStore.user?.role === 'admin'">管理员</span>
           </div>
@@ -143,6 +144,7 @@ function handleLogout() {
   justify-content: center;
   font-weight: 600;
   font-size: 16px;
+  object-fit: cover;
 }
 
 .username {

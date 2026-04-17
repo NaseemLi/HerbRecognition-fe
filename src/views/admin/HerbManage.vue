@@ -15,7 +15,8 @@
           <router-link to="/admin/users" class="admin-tab">用户管理</router-link>
         </div>
         <div class="user-info">
-          <div class="avatar">{{ userStore.user?.username.charAt(0).toUpperCase() }}</div>
+          <img v-if="userStore.user?.avatar" :src="userStore.user.avatar" alt="头像" class="avatar" />
+          <div v-else class="avatar">{{ userStore.user?.username.charAt(0).toUpperCase() }}</div>
           <span class="username">{{ userStore.user?.username }}</span>
           <span class="role-badge" v-if="userStore.user?.role === 'admin'">管理员</span>
         </div>
@@ -266,8 +267,12 @@ async function handleSubmit() {
     }
 
     const submitData: AdminHerbCreate & { id?: number } = { ...formData.value }
+
+    // 如果有新上传的图片，使用新图片；否则如果是编辑模式，保留原图片
     if (imageUrl) {
       submitData.image_url = imageUrl
+    } else if (editingItem.value?.image_url) {
+      submitData.image_url = editingItem.value.image_url
     }
 
     if (editingItem.value) {
@@ -380,6 +385,7 @@ onMounted(() => {
   justify-content: center;
   font-weight: 600;
   font-size: 16px;
+  object-fit: cover;
 }
 
 .username {

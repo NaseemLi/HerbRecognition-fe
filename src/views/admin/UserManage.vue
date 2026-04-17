@@ -25,36 +25,28 @@
     </div>
 
     <div class="table-container">
-      <table class="table">
-        <thead>
-          <tr>
-            <th class="image-col">用户</th>
-            <th>用户名</th>
-            <th>角色</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in list" :key="item.id">
-            <td>
-              <div class="user-cell">
-                <img v-if="item.avatar" :src="item.avatar" alt="头像" class="user-avatar" />
-                <div v-else class="user-avatar">{{ item.username.charAt(0).toUpperCase() }}</div>
-                <span class="user-name">{{ item.username }}</span>
-              </div>
-            </td>
-            <td>
-              <select :value="item.role" @change="handleRoleChange(item.id, $event)" class="role-select">
-                <option value="user">普通用户</option>
-                <option value="admin">管理员</option>
-              </select>
-            </td>
-            <td>
-              <button @click="handleResetPassword(item)" class="btn-text">重置密码</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-header-row">
+        <div class="th-user">用户信息</div>
+        <div class="th-role">角色</div>
+      </div>
+      <div class="table-body">
+        <div v-for="item in list" :key="item.id" class="user-row">
+          <div class="td-user">
+            <img v-if="item.avatar" :src="item.avatar" alt="头像" class="user-avatar" />
+            <div v-else class="user-avatar">{{ item.username.charAt(0).toUpperCase() }}</div>
+            <div class="user-info-text">
+              <span class="user-name">{{ item.username }}</span>
+              <span class="user-id">ID: {{ item.id }}</span>
+            </div>
+          </div>
+          <div class="td-role">
+            <select :value="item.role" @change="handleRoleChange(item.id, $event)" class="role-select">
+              <option value="user">普通用户</option>
+              <option value="admin">管理员</option>
+            </select>
+          </div>
+        </div>
+      </div>
 
       <div v-if="!loading && list.length === 0" class="empty-table">
         <p>暂无用户数据</p>
@@ -75,7 +67,6 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import BackButton from '@/components/BackButton.vue'
 import { getUserList, updateUserRole } from '@/api/user'
-import type { User } from '@/api/user'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -111,10 +102,6 @@ async function handleRoleChange(userId: number, event: Event) {
     const select = event.target as HTMLSelectElement
     select.value = list.value.find(u => u.id === userId)?.role || 'user'
   }
-}
-
-function handleResetPassword(_user: User) {
-  alert('重置密码功能请联系系统管理员')
 }
 
 function handleLogout() {
@@ -253,19 +240,17 @@ onMounted(() => {
   box-shadow: var(--shadow-sm);
 }
 
-.table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table th, .table td {
-  padding: 16px;
-  text-align: left;
+.table-header-row {
+  display: grid;
+  grid-template-columns: 1fr 160px;
+  gap: 0;
+  background: var(--bg-tertiary);
+  padding: 16px 32px;
   border-bottom: 1px solid var(--border-color);
 }
 
-.table th {
-  background: var(--bg-tertiary);
+.th-user,
+.th-role {
   font-weight: 600;
   color: var(--text-secondary);
   font-size: 13px;
@@ -273,23 +258,38 @@ onMounted(() => {
   letter-spacing: 0.5px;
 }
 
-.table tr:hover {
+.table-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-row {
+  display: grid;
+  grid-template-columns: 1fr 160px;
+  gap: 0;
+  padding: 20px 32px;
+  border-bottom: 1px solid var(--border-color);
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.user-row:hover {
   background: var(--bg-secondary);
 }
 
-.table .image-col {
-  width: 200px;
+.user-row:last-child {
+  border-bottom: none;
 }
 
-.user-cell {
+.td-user {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .user-avatar {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   color: #fff;
   border-radius: 50%;
@@ -302,13 +302,35 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
+.user-info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
 .user-name {
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 15px;
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-id {
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.td-role {
+  display: flex;
+  align-items: center;
 }
 
 .role-select {
-  padding: 8px 16px;
+  width: 120px;
+  padding: 10px 14px;
   border: 2px solid var(--border-color);
   border-radius: var(--radius);
   font-size: 14px;
@@ -321,24 +343,7 @@ onMounted(() => {
 .role-select:focus {
   border-color: var(--primary-color);
   outline: none;
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
-}
-
-.btn-text {
-  padding: 8px 16px;
-  background: transparent;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  color: var(--text-secondary);
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.2s;
-}
-
-.btn-text:hover {
-  background: var(--bg-tertiary);
-  color: var(--primary-color);
-  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
 .empty-table {
@@ -384,5 +389,35 @@ onMounted(() => {
   color: var(--text-secondary);
   font-size: 14px;
   font-weight: 500;
+}
+
+@media (max-width: 640px) {
+  .page-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .table-header-row,
+  .user-row {
+    grid-template-columns: 1fr 100px;
+    padding: 16px 20px;
+  }
+
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+
+  .role-select {
+    width: 100px;
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .th-role,
+  .user-name {
+    font-size: 14px;
+  }
 }
 </style>
