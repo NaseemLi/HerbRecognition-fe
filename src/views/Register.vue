@@ -1,58 +1,113 @@
 <template>
-  <div class="register-container">
-    <div class="register-card">
-      <div class="register-header">
-        <div class="logo-icon">
-          <img src="@public/logo.png" alt="Logo" />
+  <div class="auth-page">
+    <!-- 简洁的植物装饰背景 -->
+    <div class="bg-decoration">
+      <svg class="plant-bg plant-1" viewBox="0 0 200 300" fill="none">
+        <path d="M100 280 Q95 200 100 150" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+        <path d="M100 200 Q70 180 65 200 Q75 220 100 205" fill="currentColor" opacity="0.15"/>
+        <path d="M100 170 Q130 150 140 170 Q130 190 100 175" fill="currentColor" opacity="0.15"/>
+        <circle cx="100" cy="140" r="6" fill="currentColor" opacity="0.2"/>
+      </svg>
+      <svg class="plant-bg plant-2" viewBox="0 0 200 300" fill="none">
+        <path d="M100 280 Q105 200 100 150" stroke="currentColor" stroke-width="1.5" opacity="0.2"/>
+        <path d="M100 220 Q130 200 145 220 Q135 240 100 225" fill="currentColor" opacity="0.1"/>
+        <ellipse cx="100" cy="135" rx="8" ry="10" fill="currentColor" opacity="0.15"/>
+      </svg>
+    </div>
+
+    <div class="auth-container">
+      <!-- Logo 区域 -->
+      <div class="logo-section">
+        <div class="logo-wrapper">
+          <img src="/logo.png" alt="Logo" class="logo-img" />
+          <div class="logo-ring"></div>
         </div>
-        <h1>创建账号</h1>
-        <p class="subtitle">智能识别，传承中医文化</p>
+        <h1 class="app-title">中草药识别</h1>
+        <p class="app-tagline">Herb Recognition</p>
       </div>
 
-      <form @submit.prevent="handleRegister">
-        <div class="form-item">
-          <label>用户名</label>
-          <input
-            v-model="form.username"
-            type="text"
-            placeholder="3-32 个字符"
-            required
-            minlength="3"
-            maxlength="32"
-          />
-        </div>
-        <div class="form-item">
-          <label>密码</label>
-          <input
-            v-model="form.password"
-            type="password"
-            placeholder="至少 6 个字符"
-            required
-            minlength="6"
-          />
-        </div>
-        <div class="form-item">
-          <label>确认密码</label>
-          <input
-            v-model="form.confirmPassword"
-            type="password"
-            placeholder="请再次输入密码"
-            required
-          />
-        </div>
-        <button type="submit" :disabled="loading" class="btn-primary">
-          {{ loading ? '注册中...' : '注册' }}
-        </button>
+      <!-- 注册卡片 -->
+      <div class="auth-card">
+        <h2 class="card-title">创建账号</h2>
 
-        <p v-show="error" class="error">{{ error }}</p>
-      </form>
+        <form @submit.prevent="handleRegister" class="auth-form">
+          <div class="input-group">
+            <div class="input-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <input
+              v-model="form.username"
+              type="text"
+              placeholder="用户名"
+              required
+              minlength="3"
+              maxlength="32"
+              class="form-input"
+            />
+          </div>
 
-      <p v-show="success" class="success">注册成功，即将跳转登录</p>
+          <div class="input-group">
+            <div class="input-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <input
+              v-model="form.password"
+              type="password"
+              placeholder="密码（至少6位）"
+              required
+              minlength="6"
+              class="form-input"
+            />
+          </div>
 
-      <div class="links">
-        <span>已有账号？</span>
-        <router-link to="/login">立即登录</router-link>
+          <div class="input-group">
+            <div class="input-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <input
+              v-model="form.confirmPassword"
+              type="password"
+              placeholder="确认密码"
+              required
+              class="form-input"
+            />
+          </div>
+
+          <button type="submit" :disabled="loading" class="submit-btn">
+            <span v-if="loading" class="btn-spinner"></span>
+            <span v-else>{{ loading ? '注册中...' : '注册' }}</span>
+          </button>
+
+          <transition name="slide">
+            <p v-if="error" class="error-msg">{{ error }}</p>
+          </transition>
+
+          <transition name="scale">
+            <p v-if="success" class="success-msg">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              注册成功，即将跳转
+            </p>
+          </transition>
+        </form>
+
+        <div class="card-footer">
+          <span class="footer-text">已有账号？</span>
+          <router-link to="/login" class="link-btn">去登录</router-link>
+        </div>
       </div>
+
+      <!-- 版权信息 -->
+      <p class="copyright">© 2024 Herb Recognition</p>
     </div>
   </div>
 </template>
@@ -101,157 +156,323 @@ async function handleRegister() {
 </script>
 
 <style scoped>
-.register-container {
+.auth-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #10b981 0%, #06b6d4 50%, #10b981 100%);
-  padding: 20px;
+  background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 50%, #f0fdf4 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
 }
 
-.register-card {
-  background: rgba(255, 255, 255, 0.98);
-  padding: 48px 40px;
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg), 0 0 40px rgba(16, 185, 129, 0.2);
+/* 背景装饰 */
+.bg-decoration {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  color: var(--primary-color);
+  z-index: 0;
+}
+
+.plant-bg {
+  position: absolute;
+  width: 200px;
+  height: 300px;
+}
+
+.plant-1 {
+  top: 10%;
+  left: 5%;
+  animation: sway 8s ease-in-out infinite;
+}
+
+.plant-2 {
+  bottom: 10%;
+  right: 5%;
+  animation: swayReverse 8s ease-in-out infinite;
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+@keyframes swayReverse {
+  0%, 100% { transform: scaleX(-1) rotate(-2deg); }
+  50% { transform: scaleX(-1) rotate(2deg); }
+}
+
+/* 主容器 */
+.auth-container {
+  position: relative;
+  z-index: 1;
   width: 100%;
-  max-width: 440px;
-  backdrop-filter: blur(10px);
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.register-header {
+/* Logo 区域 */
+.logo-section {
   text-align: center;
-  margin-bottom: 36px;
+  margin-bottom: 32px;
 }
 
-.logo-icon {
-  margin-bottom: 20px;
+.logo-wrapper {
+  position: relative;
+  display: inline-flex;
+  margin-bottom: 16px;
 }
 
-.logo-icon img {
-  width: 80px;
-  height: 80px;
+.logo-img {
+  width: 72px;
+  height: 72px;
   object-fit: contain;
+  position: relative;
+  z-index: 1;
 }
 
-.register-header h1 {
-  font-size: 26px;
-  font-weight: 700;
+.logo-ring {
+  position: absolute;
+  inset: -8px;
+  border: 2px solid var(--primary-color);
+  border-radius: 50%;
+  opacity: 0.2;
+  animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.2; }
+  50% { transform: scale(1.05); opacity: 0.1; }
+}
+
+.app-title {
+  font-size: 24px;
+  font-weight: 600;
   color: var(--text-primary);
-  margin-bottom: 8px;
+  margin: 0 0 4px 0;
+  letter-spacing: 0.05em;
 }
 
-.subtitle {
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-.form-item {
-  margin-bottom: 24px;
-}
-
-.form-item label {
-  display: block;
-  margin-bottom: 10px;
-  color: var(--text-primary);
+.app-tagline {
+  font-size: 13px;
+  color: var(--text-light);
+  margin: 0;
   font-weight: 500;
-  font-size: 14px;
+  letter-spacing: 0.1em;
 }
 
-.form-item input {
+/* 注册卡片 */
+.auth-card {
   width: 100%;
-  padding: 14px 16px;
-  border: 2px solid var(--border-color);
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 10px 20px -5px rgba(16, 185, 129, 0.1),
+    0 0 0 1px rgba(16, 185, 129, 0.05);
+}
+
+.card-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 24px 0;
+  text-align: center;
+}
+
+/* 表单 */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius);
-  font-size: 15px;
   transition: all 0.2s;
-  background: var(--bg-primary);
 }
 
-.form-item input:focus {
+.input-group:focus-within {
   border-color: var(--primary-color);
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
-.form-item input::placeholder {
+.input-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  color: var(--text-light);
+  transition: color 0.2s;
+}
+
+.input-group:focus-within .input-icon {
+  color: var(--primary-color);
+}
+
+.form-input {
+  flex: 1;
+  padding: 14px 14px 14px 0;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.form-input::placeholder {
   color: var(--text-light);
 }
 
-.btn-primary {
-  width: 100%;
+/* 提交按钮 */
+.submit-btn {
+  margin-top: 8px;
   padding: 14px;
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
-  color: #fff;
+  color: #ffffff;
   border: none;
   border-radius: var(--radius);
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: var(--shadow-md);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
 }
 
-.btn-primary:hover {
+.submit-btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
 }
 
-.btn-primary:active {
-  transform: translateY(0);
-}
-
-.btn-primary:disabled {
-  background: var(--text-light);
+.submit-btn:disabled {
+  opacity: 0.7;
   cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
 }
 
-.error {
+.btn-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 错误消息 */
+.error-msg {
   padding: 12px 16px;
-  background: #fef2f2;
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius);
   color: var(--danger-color);
-  border-radius: var(--radius);
   font-size: 14px;
-  margin-top: 16px;
-  border: 1px solid #fecaca;
   text-align: center;
-  animation: shake 0.4s ease-in-out;
+  margin: 0;
 }
 
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-8px); }
-  75% { transform: translateX(8px); }
-}
-
-.success {
-  padding: 12px;
-  background: #f0fdf4;
-  color: var(--success-color);
+/* 成功消息 */
+.success-msg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 16px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
   border-radius: var(--radius);
+  color: var(--primary-color);
   font-size: 14px;
-  margin-top: 20px;
-  border: 1px solid #bbf7d0;
-  text-align: center;
+  margin: 0;
 }
 
-.links {
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.scale-enter-active,
+.scale-leave-active {
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.scale-enter-from,
+.scale-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+/* 卡片底部 */
+.card-footer {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
   text-align: center;
-  margin-top: 28px;
+  font-size: 14px;
   color: var(--text-secondary);
-  font-size: 14px;
 }
 
-.links a {
+.footer-text {
+  margin-right: 4px;
+}
+
+.link-btn {
   color: var(--primary-color);
   font-weight: 600;
-  margin-left: 4px;
+  text-decoration: none;
+  transition: color 0.2s;
 }
 
-.links a:hover {
+.link-btn:hover {
+  color: var(--primary-hover);
   text-decoration: underline;
+}
+
+/* 版权 */
+.copyright {
+  margin-top: 24px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+/* 响应式 */
+@media (max-width: 480px) {
+  .auth-page {
+    padding: 16px;
+    background: #ffffff;
+  }
+
+  .auth-card {
+    box-shadow: none;
+    padding: 24px;
+    border: 1px solid var(--border-color);
+  }
+
+  .plant-bg {
+    display: none;
+  }
 }
 </style>
