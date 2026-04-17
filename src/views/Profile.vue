@@ -124,7 +124,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { changePassword } from '@/api/auth'
-import { getUserProfile, updateUserProfile, uploadAvatar } from '@/api/user'
+import { updateUserProfile, uploadAvatar } from '@/api/user'
 import BackButton from '@/components/BackButton.vue'
 
 const router = useRouter()
