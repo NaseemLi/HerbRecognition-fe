@@ -107,9 +107,9 @@ const currentSlide = ref(0)
 let timer: number | null = null
 
 const slides = ref([
-  { name: '人参', category: '补气药', image: 'dist/home/danggui.png' },
-  { name: '枸杞', category: '补阴药', image: 'dist/home/gouqi.png' },
-  { name: '当归', category: '补血药', image: 'dist/home/danggui.png' },
+  { name: '人参', category: '补气药', image: '/banner/renshen.png' },
+  { name: '枸杞', category: '补阴药', image: '/banner/gouqi.png' },
+  { name: '当归', category: '补血药', image: '/banner/danggui.png' },
 ])
 
 function nextSlide() {
