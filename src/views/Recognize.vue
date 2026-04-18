@@ -56,7 +56,18 @@
           <div class="result-info">
             <h3>{{ result.herb_name }}</h3>
             <p class="confidence">置信度：<strong>{{ result.confidence }}%</strong></p>
-            <router-link :to="`/herb/${result.herb_id}`" class="btn-detail">查看详情</router-link>
+            <p v-if="result.herb_id && result.herb_id > 0" class="herb-id-info">药材ID: {{ result.herb_id }}</p>
+            <div class="detail-actions">
+              <router-link
+                v-if="result.herb_id && result.herb_id > 0"
+                :to="`/herb/${result.herb_id}`"
+                class="btn-detail"
+              >查看详情</router-link>
+              <router-link
+                :to="`/herbs?search=${encodeURIComponent(result.herb_name)}`"
+                class="btn-search-herb"
+              >搜索药材</router-link>
+            </div>
           </div>
         </div>
       </div>
@@ -121,6 +132,7 @@ async function handleRecognize() {
   try {
     const res = await uploadAndRecognize(selectedFile.value)
     result.value = res.data
+    console.log('识别结果:', res.data)
   } catch (e: any) {
     error.value = e.response?.data?.message || '识别失败'
   } finally {
@@ -374,6 +386,37 @@ async function handleRecognize() {
 .btn-detail:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
+}
+
+.detail-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-search-herb {
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 28px;
+  background: var(--bg-primary);
+  color: var(--primary-color);
+  text-decoration: none;
+  border: 2px solid var(--primary-color);
+  border-radius: var(--radius);
+  text-align: center;
+  width: fit-content;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-search-herb:hover {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.herb-id-info {
+  color: var(--text-light);
+  font-size: 13px;
+  margin-bottom: 16px;
 }
 
 .error-message {

@@ -80,7 +80,7 @@
       </div>
 
       <!-- 版权信息 -->
-      <p class="copyright">© 2024 Herb Recognition</p>
+      <p class="copyright"></p>
     </div>
   </div>
 </template>

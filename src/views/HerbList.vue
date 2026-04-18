@@ -74,7 +74,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import BackButton from '@/components/BackButton.vue'
 import { getHerbList, searchHerb } from '@/api/herb'
 import type { Herb } from '@/api/herb'
@@ -83,6 +83,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 const apiUrl = computed(() => API_BASE_URL)
 
 const router = useRouter()
+const route = useRoute()
 
 const list = ref<Herb[]>([])
 const loading = ref(true)
@@ -97,7 +98,7 @@ const totalPages = computed(() => Math.ceil(total.value / page_size.value))
 async function loadList() {
   loading.value = true
   hasSearched.value = false
-  
+
   try {
     const res = await getHerbList(page.value, page_size.value)
     list.value = res.data.list
@@ -112,14 +113,14 @@ async function loadList() {
 async function handleSearch() {
   page.value = 1
   hasSearched.value = true
-  
+
   if (!keyword.value.trim()) {
     loadList()
     return
   }
 
   loading.value = true
-  
+
   try {
     const res = await searchHerb(keyword.value, page.value, page_size.value)
     list.value = res.data.list
@@ -149,7 +150,14 @@ function goToDetail(id: number) {
 }
 
 onMounted(() => {
-  loadList()
+  // 从 URL 参数读取搜索关键词
+  const searchKeyword = route.query.search as string
+  if (searchKeyword && searchKeyword.trim()) {
+    keyword.value = searchKeyword.trim()
+    handleSearch()
+  } else {
+    loadList()
+  }
 })
 </script>
 

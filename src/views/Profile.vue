@@ -40,6 +40,22 @@
                 @change="handleAvatarChange"
                 style="display: none"
               />
+
+              <!-- 头像上传确认对话框 -->
+              <div v-if="showAvatarConfirm" class="avatar-confirm-overlay" @click.self="cancelAvatarUpload">
+                <div class="avatar-confirm-dialog">
+                  <h4>确认更换头像？</h4>
+                  <div class="avatar-preview">
+                    <img v-if="avatarPreview" :src="avatarPreview" alt="预览" />
+                  </div>
+                  <div class="avatar-confirm-actions">
+                    <button type="button" class="btn-cancel" @click="cancelAvatarUpload" :disabled="loading">取消</button>
+                    <button type="button" class="btn-confirm" @click="confirmAvatarUpload" :disabled="loading">
+                      {{ loading ? '上传中...' : '确认上传' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
               <div class="user-details">
                 <h3>{{ userStore.user?.username }}</h3>
                 <span class="role-badge" :class="userStore.user?.role">{{ userStore.user?.role === 'admin' ? '管理员' : '普通用户' }}</span>
@@ -60,6 +76,9 @@
                   maxlength="32"
                 />
               </div>
+
+              <div v-if="profileError" class="error-message">{{ profileError }}</div>
+              <div v-if="profileSuccess" class="success-message">{{ profileSuccess }}</div>
 
               <button type="submit" class="btn-submit" :disabled="loading">
                 {{ loading ? '保存中...' : '保存修改' }}
@@ -109,7 +128,7 @@
               <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
 
               <button type="submit" class="btn-submit" :disabled="loading">
-                {{ loading ? '修改中...' : '确认修改' }}
+                {{ loading ? '修改中...' : '修改密码' }}
               </button>
             </form>
           </div>
@@ -131,6 +150,8 @@ const router = useRouter()
 const userStore = useUserStore()
 
 const loading = ref(false)
+const profileError = ref('')
+const profileSuccess = ref('')
 const errorMessage = ref('')
 const successMessage = ref('')
 
@@ -145,6 +166,9 @@ const profileForm = reactive({
 })
 
 const fileInput = ref<HTMLInputElement | null>(null)
+const avatarFile = ref<File | null>(null)
+const avatarPreview = ref<string | null>(null)
+const showAvatarConfirm = ref(false)
 
 function triggerAvatarUpload() {
   fileInput.value?.click()
@@ -157,8 +181,8 @@ onMounted(() => {
 })
 
 async function handleUpdateProfile() {
-  errorMessage.value = ''
-  successMessage.value = ''
+  profileError.value = ''
+  profileSuccess.value = ''
   loading.value = true
 
   try {
@@ -168,21 +192,21 @@ async function handleUpdateProfile() {
     }
 
     if (Object.keys(updateData).length === 0) {
-      errorMessage.value = '未检测到任何修改'
+      profileError.value = '未检测到任何修改'
       loading.value = false
       return
     }
 
     const res = await updateUserProfile(updateData)
     userStore.setAuth(userStore.token, res.data.user)
-    successMessage.value = '资料更新成功'
+    profileSuccess.value = '资料更新成功'
     profileForm.username = res.data.user.username
-    
+
     setTimeout(() => {
-      successMessage.value = ''
+      profileSuccess.value = ''
     }, 3000)
   } catch (error: any) {
-    errorMessage.value = error.response?.data?.message || '资料更新失败'
+    profileError.value = error.response?.data?.message || '资料更新失败'
   } finally {
     loading.value = false
   }
@@ -204,18 +228,42 @@ async function handleAvatarChange(event: Event) {
     return
   }
 
+  // 显示预览，等待用户确认
+  avatarFile.value = file
+  avatarPreview.value = URL.createObjectURL(file)
+  showAvatarConfirm.value = true
+}
+
+function cancelAvatarUpload() {
+  avatarFile.value = null
+  if (avatarPreview.value) {
+    URL.revokeObjectURL(avatarPreview.value)
+  }
+  avatarPreview.value = null
+  showAvatarConfirm.value = false
+  if (fileInput.value) {
+    fileInput.value.value = ''
+  }
+}
+
+async function confirmAvatarUpload() {
+  if (!avatarFile.value) return
+
   errorMessage.value = ''
   loading.value = true
 
   const formData = new FormData()
-  formData.append('avatar', file)
+  formData.append('avatar', avatarFile.value)
 
   try {
     const res = await uploadAvatar(formData)
     const newUserData = { ...userStore.user!, avatar: res.data.avatar_url }
     userStore.setAuth(userStore.token, newUserData)
     successMessage.value = '头像上传成功'
-    
+
+    // 清理预览
+    cancelAvatarUpload()
+
     setTimeout(() => {
       successMessage.value = ''
     }, 3000)
@@ -223,9 +271,6 @@ async function handleAvatarChange(event: Event) {
     errorMessage.value = error.response?.data?.message || '头像上传失败'
   } finally {
     loading.value = false
-    if (fileInput.value) {
-      fileInput.value.value = ''
-    }
   }
 }
 
@@ -520,6 +565,99 @@ async function handleChangePassword() {
 }
 
 .btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.avatar-confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.avatar-confirm-dialog {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  max-width: 320px;
+  width: 90%;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+}
+
+.avatar-confirm-dialog h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.avatar-preview {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--primary-color);
+}
+
+.avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-confirm-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn-cancel {
+  padding: 10px 20px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border: none;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background: var(--bg-secondary);
+}
+
+.btn-cancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-confirm {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-confirm:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn-confirm:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
