@@ -67,6 +67,7 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import BackButton from '@/components/BackButton.vue'
 import { getUserList, updateUserRole } from '@/api/user'
+import type { User } from '@/api/user'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -100,7 +101,7 @@ async function handleRoleChange(userId: number, event: Event) {
   } catch (e: any) {
     alert(e.response?.data?.message || '修改失败')
     const select = event.target as HTMLSelectElement
-    select.value = list.value.find(u => u.id === userId)?.role || 'user'
+    select.value = list.value.find((u: User) => u.id === userId)?.role || 'user'
   }
 }
 
