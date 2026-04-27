@@ -13,6 +13,7 @@
         <div class="admin-tabs">
           <router-link to="/admin/herbs" class="admin-tab">药材管理</router-link>
           <router-link to="/admin/users" class="admin-tab">用户管理</router-link>
+          <router-link to="/admin/tickets" class="admin-tab">工单管理</router-link>
         </div>
         <div class="user-info">
           <img v-if="userStore.user?.avatar" :src="userStore.user.avatar" alt="头像" class="avatar" />
