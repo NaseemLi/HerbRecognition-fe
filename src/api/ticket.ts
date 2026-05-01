@@ -31,3 +31,31 @@ export function replyTicket(id: number, reply: string) {
 export function updateTicketStatus(id: number, status: string) {
   return request.post<any, ApiResponse>(`/api/admin/ticket/${id}/status`, { status })
 }
+
+export interface CreateTicketData {
+  title: string
+  content: string
+  image_url?: string
+}
+
+export function createTicket(data: CreateTicketData) {
+  return request.post<any, ApiResponse<Ticket>>('/api/ticket', data)
+}
+
+export function getMyTickets(page = 1, page_size = 10, status = '') {
+  return request.get<any, ApiResponse<PageResult<Ticket>>>('/api/ticket', {
+    params: { page, page_size, status },
+  })
+}
+
+export function getMyTicketDetail(id: number) {
+  return request.get<any, ApiResponse<Ticket>>(`/api/ticket/${id}`)
+}
+
+export function uploadImage(formData: FormData) {
+  return request.post<any, ApiResponse<{ image_url: string }>>('/api/upload/image', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+}

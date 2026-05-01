@@ -42,6 +42,13 @@ export function getHistory(page = 1, page_size = 10) {
   )
 }
 
+export function recognizeBase64(image_base64: string) {
+  return request.post<any, ApiResponse<RecognizeResult>>(
+    '/api/recognize/base64',
+    { image_base64 }
+  )
+}
+
 export function deleteHistory(id: number) {
   return request.delete<any, ApiResponse>('/api/recognize/history', {
     data: { id },

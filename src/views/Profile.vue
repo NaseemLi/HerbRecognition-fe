@@ -62,6 +62,24 @@
               </div>
             </div>
 
+            <div v-if="userStore.user?.role === 'user'" class="ticket-section">
+              <h4>工单管理</h4>
+              <div class="ticket-links">
+                <router-link to="/tickets" class="ticket-link">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  我的工单
+                </router-link>
+                <router-link to="/ticket/submit" class="ticket-link">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  提交工单
+                </router-link>
+              </div>
+            </div>
+
             <form @submit.prevent="handleUpdateProfile" class="profile-form">
               <h4>修改资料</h4>
               
@@ -488,6 +506,55 @@ async function handleChangePassword() {
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 20px;
+}
+
+.ticket-section {
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.ticket-section h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+}
+
+.ticket-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ticket-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.ticket-link:hover {
+  background: rgba(16, 185, 129, 0.05);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.ticket-link svg {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.ticket-link:hover svg {
+  color: var(--primary-color);
 }
 
 .profile-form {
