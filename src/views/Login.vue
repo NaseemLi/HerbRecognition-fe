@@ -23,7 +23,6 @@
           <div class="logo-ring"></div>
         </div>
         <h1 class="app-title">中草药识别</h1>
-        <p class="app-tagline">Herb Recognition</p>
       </div>
 
       <!-- 登录卡片 -->

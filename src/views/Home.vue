@@ -22,7 +22,6 @@
         <div class="hero-section">
           <div class="hero-text">
             <h2>中草药识别系统</h2>
-            <p>基于人工智能的中草药识别平台，帮助您快速准确地识别各类中草药</p>
             <div class="hero-actions">
               <router-link to="/recognize" class="btn-primary">拍照识别</router-link>
               <router-link to="/herbs" class="btn-secondary">药材百科</router-link>
@@ -63,7 +62,7 @@
                 </svg>
               </div>
               <h4>拍照识别</h4>
-              <p>上传药材照片，AI 智能识别品种和功效</p>
+              <p>上传药材照片，识别品种和功效</p>
               <span class="feature-link">立即使用 →</span>
             </router-link>
             <router-link to="/herbs" class="feature-card">

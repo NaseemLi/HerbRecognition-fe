@@ -5,9 +5,8 @@
     </div>
     <div class="page-header">
       <h1>药材查询</h1>
-      <p>探索中草药的奥秘</p>
     </div>
-    
+
     <div class="search-bar">
       <div class="search-input-wrapper">
         <span class="search-icon">
@@ -16,9 +15,9 @@
             <path d="M13 13L17 17" stroke="#9ca3af" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </span>
-        <input 
+        <input
           v-model="keyword"
-          type="text" 
+          type="text"
           placeholder="输入药材名称或别名搜索..."
           @keyup.enter="handleSearch"
         />
@@ -30,7 +29,7 @@
       <div class="loading-spinner"></div>
       <p>加载中...</p>
     </div>
-    
+
     <div v-else-if="list.length === 0" class="empty">
       <div class="empty-icon">
         <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -42,7 +41,7 @@
       <h3>{{ hasSearched ? '未找到相关药材' : '暂无数据' }}</h3>
       <p v-if="hasSearched">试试其他关键词吧</p>
     </div>
-    
+
     <div v-else class="list">
       <div v-for="item in list" :key="item.id" class="item" @click="goToDetail(item.id)">
         <div class="item-image-wrapper">
@@ -434,16 +433,16 @@ onMounted(() => {
   .search-bar {
     flex-direction: column;
   }
-  
+
   .item {
     flex-wrap: wrap;
   }
-  
+
   .item-image {
     width: 100%;
     height: 180px;
   }
-  
+
   .item-arrow {
     display: none;
   }

@@ -5,7 +5,7 @@
     </div>
     <div class="page-header">
       <h1>药材识别</h1>
-      <p>选择识别方式，AI 智能识别中草药</p>
+      <p>选择识别方式，识别中草药</p>
     </div>
 
     <div class="mode-tabs">
