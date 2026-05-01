@@ -42,10 +42,10 @@ export function getHistory(page = 1, page_size = 10) {
   )
 }
 
-export function recognizeBase64(image_base64: string) {
+export function recognizeBase64(image_base64: string, save_history: boolean = true) {
   return request.post<any, ApiResponse<RecognizeResult>>(
     '/api/recognize/base64',
-    { image_base64 }
+    { image_base64, save_history }
   )
 }
 

@@ -102,9 +102,28 @@
 
             <!-- 实时模式 -->
             <template v-if="mode === 'realtime'">
-              <span class="realtime-status" :class="{ recognizing }">
+              <button
+                v-if="!isRealtimeRunning"
+                @click="startRealtime"
+                :disabled="!isCameraReady"
+                class="btn-primary"
+              >
+                开始识别
+              </button>
+              <button
+                v-else
+                @click="stopRealtime"
+                class="btn-danger"
+              >
+                关闭识别
+              </button>
+              <span v-if="isRealtimeRunning" class="realtime-status" :class="{ recognizing }">
                 <span class="status-dot"></span>
                 {{ recognizing ? '识别中...' : '实时识别中' }}
+              </span>
+              <span v-else-if="isCameraReady" class="realtime-status ready">
+                <span class="status-dot"></span>
+                摄像头已就绪
               </span>
             </template>
           </div>
@@ -176,6 +195,8 @@ const stream = ref<MediaStream | null>(null)
 const isCameraReady = ref(false)
 const realtimeTimer = ref<ReturnType<typeof setInterval> | null>(null)
 const isRecognizingInProgress = ref(false)
+const lastSavedHerbId = ref<number | null>(null)
+const isRealtimeRunning = ref(false)
 
 const showVideo = computed(() => {
   if (mode.value === 'upload') return false
@@ -251,9 +272,6 @@ async function startCamera() {
       videoRef.value.srcObject = stream.value
       await videoRef.value.play()
       isCameraReady.value = true
-      if (mode.value === 'realtime') {
-        startRealtime()
-      }
     }
   } catch (e: any) {
     isCameraReady.value = false
@@ -310,6 +328,32 @@ async function recognizeFrame(base64Data: string) {
   }
 }
 
+// Realtime mode: dedup by herb_id
+async function recognizeFrameRealtime(base64Data: string) {
+  if (isRecognizingInProgress.value) return
+  isRecognizingInProgress.value = true
+  recognizing.value = true
+  error.value = ''
+
+  try {
+    // 先不保存，获取识别结果
+    const res = await recognizeBase64(base64Data, false)
+    result.value = res.data
+
+    // 药材变化时，再保存一次
+    if (res.data && lastSavedHerbId.value !== res.data.herb_id) {
+      const saveRes = await recognizeBase64(base64Data, true)
+      result.value = saveRes.data
+      lastSavedHerbId.value = res.data.herb_id
+    }
+  } catch (e: any) {
+    error.value = e.response?.data?.message || '识别失败'
+  } finally {
+    recognizing.value = false
+    isRecognizingInProgress.value = false
+  }
+}
+
 // Photo mode
 async function handleCapture() {
   if (!isCameraReady.value) return
@@ -331,18 +375,21 @@ function retakePhoto() {
 
 // Realtime mode
 function startRealtime() {
-  if (!isCameraReady.value) return
+  if (!isCameraReady.value || isRealtimeRunning.value) return
+  isRealtimeRunning.value = true
+  lastSavedHerbId.value = null
+  error.value = ''
   // 立即执行一次
   const base64 = captureFrame()
   if (base64) {
-    recognizeFrame(base64)
+    recognizeFrameRealtime(base64)
   }
   // 每 1 秒执行一次
   realtimeTimer.value = setInterval(() => {
-    if (!isCameraReady.value) return
+    if (!isCameraReady.value || !isRealtimeRunning.value) return
     const b64 = captureFrame()
     if (b64) {
-      recognizeFrame(b64)
+      recognizeFrameRealtime(b64)
     }
   }, 1000)
 }
@@ -352,6 +399,9 @@ function stopRealtime() {
     clearInterval(realtimeTimer.value)
     realtimeTimer.value = null
   }
+  isRealtimeRunning.value = false
+  recognizing.value = false
+  isRecognizingInProgress.value = false
 }
 
 // Mode switch
@@ -367,6 +417,8 @@ function switchMode(newMode: Mode) {
   previewUrl.value = ''
   selectedFile.value = null
   isRecognizingInProgress.value = false
+  lastSavedHerbId.value = null
+  isRealtimeRunning.value = false
 
   mode.value = newMode
 
@@ -574,6 +626,11 @@ onUnmounted(() => {
   color: var(--primary-color);
 }
 
+.realtime-status.ready {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
 .status-dot {
   width: 8px;
   height: 8px;
@@ -631,6 +688,24 @@ onUnmounted(() => {
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+
+.btn-danger {
+  padding: 12px 32px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Result section */
