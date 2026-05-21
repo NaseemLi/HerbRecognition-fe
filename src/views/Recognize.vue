@@ -196,6 +196,7 @@ const isCameraReady = ref(false)
 const realtimeTimer = ref<ReturnType<typeof setInterval> | null>(null)
 const isRecognizingInProgress = ref(false)
 const lastSavedHerbId = ref<number | null>(null)
+const lastImageUrl = ref<string>('')
 const isRealtimeRunning = ref(false)
 
 const showVideo = computed(() => {
@@ -336,15 +337,23 @@ async function recognizeFrameRealtime(base64Data: string) {
   error.value = ''
 
   try {
-    // 先不保存，获取识别结果
+    // 先识别（不保存），检查药材是否变化
     const res = await recognizeBase64(base64Data, false)
     result.value = res.data
 
-    // 药材变化时，再保存一次
+    // 用上次保存的 image_url 兜底，避免 save_history=false 时无图
+    if (res.data && (!res.data.image_url || res.data.image_url === '')) {
+      result.value = { ...res.data, image_url: lastImageUrl.value }
+    }
+
+    // 药材变化时，保存一次以获取真正的图片 URL
     if (res.data && lastSavedHerbId.value !== res.data.herb_id) {
       const saveRes = await recognizeBase64(base64Data, true)
       result.value = saveRes.data
-      lastSavedHerbId.value = res.data.herb_id
+      lastSavedHerbId.value = saveRes.data.herb_id
+      if (saveRes.data.image_url) {
+        lastImageUrl.value = saveRes.data.image_url
+      }
     }
   } catch (e: any) {
     error.value = e.response?.data?.message || '识别失败'
@@ -378,6 +387,7 @@ function startRealtime() {
   if (!isCameraReady.value || isRealtimeRunning.value) return
   isRealtimeRunning.value = true
   lastSavedHerbId.value = null
+  lastImageUrl.value = ''
   error.value = ''
   // 立即执行一次
   const base64 = captureFrame()
@@ -418,6 +428,7 @@ function switchMode(newMode: Mode) {
   selectedFile.value = null
   isRecognizingInProgress.value = false
   lastSavedHerbId.value = null
+  lastImageUrl.value = ''
   isRealtimeRunning.value = false
 
   mode.value = newMode
